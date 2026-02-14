@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins } from 'react-icons/fa';
-import { useUser, useClerk } from '@clerk/clerk-react'; 
+import { FaHome, FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd } from 'react-icons/fa';
+import { useUser, useClerk } from '@clerk/clerk-react';
 import { useCredits } from '../context/CreditContext';
 import { logo, hair } from '../assets/index';
-import styles from '../styles/DashboardStyles'; 
+import styles from '../styles/DashboardStyles';
+import WeatherWidget from '../components/WeatherWidget';
 
 const Dashboard: React.FC = () => {
   const location = useLocation();
@@ -85,6 +86,20 @@ const Dashboard: React.FC = () => {
               <FaCoins className={styles.navIcon} />
               <span className={styles.navText}>Buy Credits</span>
             </Link>
+            <Link
+              to="/dashboard/history"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/history' ? styles.activeLink : ''}`}
+            >
+              <FaHistory className={styles.navIcon} />
+              <span className={styles.navText}>History</span>
+            </Link>
+            <Link
+              to="/dashboard/consult"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/consult' ? styles.activeLink : ''}`}
+            >
+              <FaUserMd className={styles.navIcon} />
+              <span className={styles.navText}>Expert</span>
+            </Link>
           </nav>
 
           {/* Sidebar Footer with User Information */}
@@ -138,6 +153,7 @@ const Dashboard: React.FC = () => {
 
       {/* Main Content */}
       <div className={styles.mainContent}>
+        <WeatherWidget />
         <Outlet /> {/* This is where different pages will be rendered */}
       </div>
     </div>

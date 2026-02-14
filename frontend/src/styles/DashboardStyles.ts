@@ -1,10 +1,10 @@
 const DashboardStyles = {
-  container: "min-h-screen flex flex-col md:flex-row bg-white",
+  container: "flex min-h-screen bg-gray-50",
   mobileToggle: "flex md:hidden justify-between items-center bg-gray-800 text-white px-4 py-3",
   mobileTitle: "text-2xl font-bold",
   toggleButton: "focus:outline-none",
   toggleIcon: "text-2xl",
-  sidebar: "bg-white text-gray-700 w-64 py-7 px-4 shadow-md flex flex-col justify-between transition-transform duration-300", // Set flex-col and justify-between
+  sidebar: "bg-white text-gray-700 w-64 flex-shrink-0 h-screen sticky top-0 py-7 px-4 shadow-xl border-r border-gray-100 hidden md:flex flex-col justify-between z-10",
   logoContainer: "flex items-center justify-center py-4 mb-6",
   logoImage: "w-10 h-10",
   logoText: "text-2xl font-bold text-gray-800 ml-3",
@@ -25,7 +25,7 @@ const DashboardStyles = {
   cardAvatar: "w-12 h-12 rounded-full border-2 border-gray-300 mr-2",
   cardUserName: "font-semibold",
   cardUserEmail: "text-sm text-gray-500",
-  mainContent: "flex-1 p-10 text-gray-800",
+  mainContent: "flex-1 w-full max-w-7xl mx-auto p-4 md:p-8 lg:p-12",
 };
 
 export default DashboardStyles;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import * as tmImage from '@teachablemachine/image'; // Import Teachable Machine
 import CameraCapturePage from './CameraCapture'; // Import the CameraCapturePage component
 import ImageUploader from './ImageUploader'; // Import the ImageUploader component
@@ -11,7 +12,8 @@ const PhotoPage: React.FC = () => {
   const [model, setModel] = useState<any | null>(null);
   const [modelError, setModelError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  
+  const { user } = useUser();
+
   // IMPORTANT: Replace these with your actual Teachable Machine model URLs
   // Example: 'https://teachablemachine.withgoogle.com/models/YOUR_MODEL_ID/model.json'
   const modelURL = import.meta.env.VITE_MODEL_URL || 'https://teachablemachine.withgoogle.com/models/LNAvMinwT/model.json';
@@ -40,7 +42,7 @@ const PhotoPage: React.FC = () => {
     }
 
     setIsAnalyzing(true);
-    
+
     try {
       const image = document.createElement('img');
       image.src = URL.createObjectURL(file);
@@ -56,16 +58,19 @@ const PhotoPage: React.FC = () => {
             probability: pred.probability
           }));
 
-          // Send results to the backend
+          // Send results to the backend (History API)
           try {
-            const response = await axios.post('http://localhost:5000/api/classifications/classify', {
-              imageSrc,
-              predictions: predictionData
-            });
-
-            console.log('Data successfully sent to the backend:', response.data);
+            if (user) {
+              await axios.post('http://localhost:5000/api/history', {
+                userId: user.id,
+                date: new Date().toISOString(),
+                result: predictionData[0].className, // Top result
+                image: imageSrc // Save image as base64
+              });
+              console.log('Analysis saved to history');
+            }
           } catch (error) {
-            console.error('Error sending data to the backend:', error);
+            console.error('Error saving history:', error);
             // Continue even if backend fails - show predictions to user
           }
         } catch (error) {

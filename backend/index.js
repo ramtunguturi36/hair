@@ -15,7 +15,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Middleware
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
 // Stripe Payment Route
 app.post('/create-checkout-session', async (req, res) => {
@@ -50,6 +50,70 @@ app.post('/create-checkout-session', async (req, res) => {
     console.error('Error creating checkout session:', error);
     res.status(500).json({ error: 'Failed to create checkout session' });
   }
+});
+
+
+// History Data File Path
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const HISTORY_FILE = path.join(__dirname, 'history.json');
+
+// Helper to read history
+const readHistory = () => {
+  try {
+    if (!fs.existsSync(HISTORY_FILE)) {
+      return [];
+    }
+    const data = fs.readFileSync(HISTORY_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading history:", error);
+    return [];
+  }
+};
+
+// Helper to write history
+const writeHistory = (data) => {
+  try {
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("Error writing history:", error);
+  }
+};
+
+// GET History for a user
+app.get('/api/history/:userId', (req, res) => {
+  const { userId } = req.params;
+  const allHistory = readHistory();
+  const userHistory = allHistory.filter(item => item.userId === userId);
+  res.json(userHistory);
+});
+
+// POST Save Analysis Result
+app.post('/api/history', (req, res) => {
+  const { userId, date, result, image } = req.body;
+
+  if (!userId || !result) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const newEntry = {
+    id: Date.now().toString(),
+    userId,
+    date: date || new Date().toISOString(),
+    result,
+    image // Optional base64 or URL
+  };
+
+  const history = readHistory();
+  history.push(newEntry);
+  writeHistory(history);
+
+  res.json({ success: true, entry: newEntry });
 });
 
 app.listen(PORT, () => {
