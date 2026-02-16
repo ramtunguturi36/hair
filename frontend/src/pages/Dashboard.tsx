@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd } from 'react-icons/fa';
+import { FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd, FaHeartbeat, FaMagic, FaUserCog } from 'react-icons/fa';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useCredits } from '../context/CreditContext';
 import { logo, hair } from '../assets/index';
@@ -98,7 +98,28 @@ const Dashboard: React.FC = () => {
               className={`${styles.navLink} ${location.pathname === '/dashboard/consult' ? styles.activeLink : ''} `}
             >
               <FaUserMd className={`${styles.navIcon} ${location.pathname === '/dashboard/consult' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
-              <span className={styles.navText}>Expert</span>
+              <span className={styles.navText}>Expert AI</span>
+            </Link>
+            <Link
+              to="/dashboard/hair-loss"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/hair-loss' ? styles.activeLink : ''} `}
+            >
+              <FaHeartbeat className={`${styles.navIcon} ${location.pathname === '/dashboard/hair-loss' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
+              <span className={styles.navText}>Risk Calc</span>
+            </Link>
+            <Link
+              to="/dashboard/style-guide"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/style-guide' ? styles.activeLink : ''} `}
+            >
+              <FaMagic className={`${styles.navIcon} ${location.pathname === '/dashboard/style-guide' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
+              <span className={styles.navText}>Style Guide</span>
+            </Link>
+            <Link
+              to="/dashboard/profile"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/profile' ? styles.activeLink : ''} `}
+            >
+              <FaUserCog className={`${styles.navIcon} ${location.pathname === '/dashboard/profile' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
+              <span className={styles.navText}>Profile</span>
             </Link>
           </nav>
 

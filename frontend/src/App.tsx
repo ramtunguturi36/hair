@@ -8,10 +8,11 @@ import Home from './pages/Home';
 import PricingPage from './pages/PricingPage';
 import HistoryPage from './pages/HistoryPage';
 import ConsultationPage from './pages/ConsultationPage';
+import HairLossPage from './pages/HairLossPage';
+import StyleGuidePage from './pages/StyleGuidePage';
+import ProfilePage from './pages/ProfilePage';
 
 
-// Using Vite environment variables for Clerk API key
-const clerkFrontendApi = import.meta.env.VITE_CLERK_FRONTEND_API;
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -58,6 +59,9 @@ const App: React.FC = () => {
             <Route path="pricing" element={<PricingPage />} />
             <Route path="history" element={<HistoryPage />} />
             <Route path="consult" element={<ConsultationPage />} />
+            <Route path="hair-loss" element={<HairLossPage />} />
+            <Route path="style-guide" element={<StyleGuidePage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </ErrorBoundary>

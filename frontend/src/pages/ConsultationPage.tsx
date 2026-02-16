@@ -1,130 +1,156 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { FaUserMd, FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+
+interface Message {
+    id: string;
+    text: string;
+    sender: 'user' | 'ai';
+    timestamp: Date;
+}
 
 const ConsultationPage: React.FC = () => {
     const { user } = useUser();
-    const [formData, setFormData] = useState({
-        name: user?.fullName || '',
-        email: user?.primaryEmailAddress?.emailAddress || '',
-        concern: '',
-        hairType: ''
-    });
-    const [submitted, setSubmitted] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: '1',
+            text: `Hello ${user?.firstName || 'there'}! I'm your AI Hair Consultant. How can I help you with your hair today?`,
+            sender: 'ai',
+            timestamp: new Date()
+        }
+    ]);
+    const [inputText, setInputText] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
-        // Simulate API call / EmailJS
-        console.log('Sending consultation request:', formData);
+        if (!inputText.trim()) return;
 
-        // Simulate network delay
+        const newUserMessage: Message = {
+            id: Date.now().toString(),
+            text: inputText,
+            sender: 'user',
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, newUserMessage]);
+        setInputText('');
+        setIsTyping(true);
+
+        // Simulate AI response
         setTimeout(() => {
-            setSubmitted(true);
-        }, 1000);
-    };
+            const aiResponses = [
+                "That's a great question! Based on general trichology principles, I'd suggest...",
+                "Could you tell me a bit more about your hair texture? Is it oily or dry?",
+                "I recommend checking our Analysis tool for a more precise answer, but typically...",
+                "Hair loss can be caused by many factors including stress and diet. Have you noticed any recent changes?",
+                "For that specific issue, products with Argan oil or Keratin are usually beneficial."
+            ];
+            const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
 
-    if (submitted) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 h-full text-center">
-                <div className="bg-green-100 p-6 rounded-full mb-6">
-                    <FaPaperPlane className="text-4xl text-green-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Request Sent!</h2>
-                <p className="text-gray-600 max-w-md">
-                    Our hair specialists have received your query. You will receive a personalized response at
-                    <span className="font-semibold text-gray-800"> {formData.email} </span>
-                    within 24 hours.
-                </p>
-                <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-8 text-purple-600 font-semibold hover:underline"
-                >
-                    Send another request
-                </button>
-            </div>
-        );
-    }
+            const newAiMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: randomResponse,
+                sender: 'ai',
+                timestamp: new Date()
+            };
+
+            setMessages(prev => [...prev, newAiMessage]);
+            setIsTyping(false);
+        }, 1500);
+    };
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-10 text-white">
-                    <h2 className="text-3xl font-extrabold flex items-center mb-3">
-                        <FaUserMd className="mr-4 text-purple-200" />
-                        Ask an Expert
-                    </h2>
-                    <p className="text-purple-100 text-lg">
-                        Get professional advice from certified trichologists for your specific hair concerns.
-                    </p>
+        <div className="h-[calc(100vh-100px)] flex flex-col max-w-4xl mx-auto p-4">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 flex flex-col h-full overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white flex items-center shadow-md z-10">
+                    <div className="bg-white/20 p-3 rounded-full mr-4 backdrop-blur-sm">
+                        <FaRobot className="text-2xl text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold">AI Hair Consultant</h2>
+                        <p className="text-purple-100 text-sm flex items-center">
+                            <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                            Online & Ready to Help
+                        </p>
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Hair Type (Optional)</label>
-                        <select
-                            name="hairType"
-                            value={formData.hairType}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                {/* Messages Area */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+                    {messages.map((msg) => (
+                        <div
+                            key={msg.id}
+                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <option value="">Select your hair type...</option>
-                            <option value="Type 1 (Straight)">Type 1 (Straight)</option>
-                            <option value="Type 2 (Wavy)">Type 2 (Wavy)</option>
-                            <option value="Type 3 (Curly)">Type 3 (Curly)</option>
-                            <option value="Type 4 (Coily)">Type 4 (Coily)</option>
-                            <option value="Not Sure">Not Sure</option>
-                        </select>
-                    </div>
+                            <div className={`flex items-end max-w-[80%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.sender === 'user'
+                                    ? 'bg-indigo-100 text-indigo-600 ml-2'
+                                    : 'bg-purple-100 text-purple-600 mr-2'
+                                    }`}>
+                                    {msg.sender === 'user' ? <FaUser size={14} /> : <FaRobot size={14} />}
+                                </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Describe your concern</label>
-                        <textarea
-                            name="concern"
-                            value={formData.concern}
-                            onChange={handleChange}
-                            required
-                            rows={5}
-                            placeholder="E.g., My hair feels dry even after conditioning, or I have excessive breakage..."
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                <div className={`px-5 py-3 rounded-2xl shadow-sm ${msg.sender === 'user'
+                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none'
+                                    : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
+                                    }`}>
+                                    <p className="text-sm md:text-base leading-relaxed">{msg.text}</p>
+                                    <span className={`text-[10px] block mt-1 opacity-70 ${msg.sender === 'user' ? 'text-indigo-100 text-right' : 'text-gray-400'
+                                        }`}>
+                                        {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                    {isTyping && (
+                        <div className="flex justify-start">
+                            <div className="flex items-end">
+                                <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 mr-2 flex items-center justify-center">
+                                    <FaRobot size={14} />
+                                </div>
+                                <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center space-x-1">
+                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 bg-white border-t border-gray-100">
+                    <form onSubmit={handleSendMessage} className="flex gap-2 relative">
+                        <input
+                            type="text"
+                            value={inputText}
+                            onChange={(e) => setInputText(e.target.value)}
+                            placeholder="Ask me anything about your hair..."
+                            className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 px-6 py-4 rounded-xl border-none focus:ring-2 focus:ring-purple-100 focus:bg-white transition-all shadow-inner"
                         />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full btn-primary py-4 text-lg shadow-xl"
-                    >
-                        Submit Request
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            disabled={!inputText.trim()}
+                            className="bg-gray-900 text-white p-4 rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-95"
+                        >
+                            <FaPaperPlane />
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
