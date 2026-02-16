@@ -51,13 +51,13 @@ const ConsultationPage: React.FC = () => {
 
     return (
         <div className="max-w-3xl mx-auto p-6">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white">
-                    <h2 className="text-3xl font-bold flex items-center mb-2">
-                        <FaUserMd className="mr-3" />
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-10 text-white">
+                    <h2 className="text-3xl font-extrabold flex items-center mb-3">
+                        <FaUserMd className="mr-4 text-purple-200" />
                         Ask an Expert
                     </h2>
-                    <p className="opacity-90">
+                    <p className="text-purple-100 text-lg">
                         Get professional advice from certified trichologists for your specific hair concerns.
                     </p>
                 </div>
@@ -120,7 +120,7 @@ const ConsultationPage: React.FC = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-gray-900 text-white font-bold py-4 rounded-lg hover:bg-gray-800 transition transform hover:scale-[1.01]"
+                        className="w-full btn-primary py-4 text-lg shadow-xl"
                     >
                         Submit Request
                     </button>

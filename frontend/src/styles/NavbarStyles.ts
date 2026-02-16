@@ -1,16 +1,15 @@
 const NavbarStyles = {
-    navbar: "bg-white text-black py-4 shadow-md",
-    container: "container mx-auto flex flex-col md:flex-row justify-between items-center px-4 md:px-6",
-    logo: "text-2xl font-bold text-green-500 mb-4 md:mb-0",
-    toggleButton: "text-2xl text-green-500 focus:outline-none",
-    navLinks: "flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0 absolute md:relative bg-white md:bg-transparent w-full md:w-auto transition-all duration-300",
-    openMenu: "top-16 p-4",
-    closedMenu: "top-[-200px] md:top-auto hidden md:flex",
-    link: "hover:text-green-500",
-    actionButtons: "mt-4 md:mt-0 flex space-x-4",
-    getStartedButton: "bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 mx-2",
-    loginButton: "bg-transparent text-green-500 border border-green-500 px-4 py-2 rounded-lg hover:bg-green-100",
-  };
-  
-  export default NavbarStyles;
-  
+  navbar: "fixed w-full z-50 transition-all duration-300 bg-black/20 backdrop-blur-md border-b border-white/10",
+  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20",
+  logo: "text-2xl font-bold text-white flex items-center gap-2",
+  toggleButton: "text-white text-2xl focus:outline-none",
+  navLinks: "hidden md:flex space-x-8 items-center",
+  link: "text-gray-300 hover:text-white transition-colors duration-200 font-medium",
+  mobileMenu: "md:hidden absolute top-20 left-0 w-full bg-gray-900 border-t border-gray-800 p-4 flex flex-col space-y-4",
+  mobileLink: "block text-gray-300 hover:text-white py-2",
+  actionButtons: "hidden md:flex items-center space-x-4",
+  loginButton: "text-white font-medium hover:text-purple-300 transition-colors",
+  getStartedButton: "btn-primary py-2 px-5 text-sm",
+};
+
+export default NavbarStyles;

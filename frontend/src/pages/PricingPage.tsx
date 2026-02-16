@@ -128,7 +128,7 @@ const PricingPage: React.FC = () => {
             <FaArrowLeft className="mr-2" />
             Back
           </button>
-          
+
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Buy Analysis Credits
@@ -136,9 +136,11 @@ const PricingPage: React.FC = () => {
             <p className="text-lg text-gray-600 mb-4">
               Get AI-powered hair analysis and personalized recommendations
             </p>
-            <div className="inline-block bg-green-100 border border-green-500 rounded-lg px-6 py-3">
-              <p className="text-green-800 font-semibold">
-                Current Balance: <span className="text-2xl">{credits}</span> Credits
+            <div className="inline-block bg-white/50 backdrop-blur-sm border border-green-200 rounded-2xl px-8 py-4 shadow-sm">
+              <p className="text-green-800 font-bold flex items-center gap-3">
+                <span className="text-sm uppercase tracking-wider text-green-600">Current Balance</span>
+                <span className="text-3xl">{credits}</span>
+                <span className="text-sm font-normal text-green-600">Credits</span>
               </p>
             </div>
           </div>
@@ -149,11 +151,10 @@ const PricingPage: React.FC = () => {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl shadow-xl p-8 text-center transform transition-all hover:scale-105 ${
-                plan.popular
+              className={`relative rounded-2xl shadow-xl p-8 text-center transform transition-all hover:scale-105 ${plan.popular
                   ? 'border-4 border-green-500 bg-white'
                   : 'border-2 border-gray-200 bg-white'
-              }`}
+                }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -196,11 +197,10 @@ const PricingPage: React.FC = () => {
               </ul>
 
               <button
-                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
-                  plan.popular
-                    ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg'
-                    : 'bg-gray-800 hover:bg-gray-900 text-white'
-                }`}
+                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 ${plan.popular
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-xl shadow-green-200'
+                    : 'bg-gray-900 hover:bg-black text-white shadow-lg'
+                  }`}
                 onClick={() => handleCheckout(plan)}
               >
                 Purchase Now
@@ -215,7 +215,7 @@ const PricingPage: React.FC = () => {
             💡 How Credits Work
           </h3>
           <p className="text-blue-800">
-            Each hair analysis costs <strong>25 credits</strong>. Credits never expire and can be used anytime. 
+            Each hair analysis costs <strong>25 credits</strong>. Credits never expire and can be used anytime.
             Purchase the package that best fits your needs – no subscriptions, no hidden fees!
           </p>
         </div>

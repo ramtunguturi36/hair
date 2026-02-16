@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd } from 'react-icons/fa';
+import { FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd } from 'react-icons/fa';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useCredits } from '../context/CreditContext';
 import { logo, hair } from '../assets/index';
@@ -38,9 +38,9 @@ const Dashboard: React.FC = () => {
 
   const maskEmail = (email: string) => {
     const [username, domain] = email.split('@');
-    const maskedUsername = username.length > 3 ? `${username.slice(0, 3)}**` : username;
-    const maskedDomain = domain.split('.').map((part, index) => (index === 0 ? `${part[0]}**` : part)).join('.');
-    return `${maskedUsername}@${maskedDomain}`;
+    const maskedUsername = username.length > 3 ? `${username.slice(0, 3)}** ` : username;
+    const maskedDomain = domain.split('.').map((part, index) => (index === 0 ? `${part[0]}** ` : part)).join('.');
+    return `${maskedUsername} @${maskedDomain} `;
   };
 
   return (
@@ -67,37 +67,37 @@ const Dashboard: React.FC = () => {
           <nav className={styles.nav}>
             <Link
               to="/dashboard/analysis"
-              className={`${styles.navLink} ${location.pathname === '/dashboard/analysis' ? styles.activeLink : ''}`}
+              className={`${styles.navLink} ${location.pathname === '/dashboard/analysis' ? styles.activeLink : ''} `}
             >
-              <FaChartLine className={styles.navIcon} />
+              <FaChartLine className={`${styles.navIcon} ${location.pathname === '/dashboard/analysis' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>Beauty</span>
             </Link>
             <Link
               to="/dashboard/photo"
-              className={`${styles.navLink} ${location.pathname === '/dashboard/photo' ? styles.activeLink : ''}`}
+              className={`${styles.navLink} ${location.pathname === '/dashboard/photo' ? styles.activeLink : ''} `}
             >
-              <FaCamera className={styles.navIcon} />
+              <FaCamera className={`${styles.navIcon} ${location.pathname === '/dashboard/photo' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>Take Photo</span>
             </Link>
             <Link
               to="/dashboard/pricing"
-              className={`${styles.navLink} ${location.pathname === '/dashboard/pricing' ? styles.activeLink : ''}`}
+              className={`${styles.navLink} ${location.pathname === '/dashboard/pricing' ? styles.activeLink : ''} `}
             >
-              <FaCoins className={styles.navIcon} />
+              <FaCoins className={`${styles.navIcon} ${location.pathname === '/dashboard/pricing' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>Buy Credits</span>
             </Link>
             <Link
               to="/dashboard/history"
-              className={`${styles.navLink} ${location.pathname === '/dashboard/history' ? styles.activeLink : ''}`}
+              className={`${styles.navLink} ${location.pathname === '/dashboard/history' ? styles.activeLink : ''} `}
             >
-              <FaHistory className={styles.navIcon} />
+              <FaHistory className={`${styles.navIcon} ${location.pathname === '/dashboard/history' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>History</span>
             </Link>
             <Link
               to="/dashboard/consult"
-              className={`${styles.navLink} ${location.pathname === '/dashboard/consult' ? styles.activeLink : ''}`}
+              className={`${styles.navLink} ${location.pathname === '/dashboard/consult' ? styles.activeLink : ''} `}
             >
-              <FaUserMd className={styles.navIcon} />
+              <FaUserMd className={`${styles.navIcon} ${location.pathname === '/dashboard/consult' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>Expert</span>
             </Link>
           </nav>
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
             <p className={styles.credits}>Credits: {credits}</p>
             <div onClick={toggleCard} className={styles.avatarContainer}>
               <img
-                src={user?.profileImageUrl || user?.imageUrl || hair}
+                src={user?.imageUrl || hair}
                 alt="User Avatar"
                 className={styles.avatarImage}
               />
@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
             >
               <div className={styles.cardHeader}>
                 <img
-                  src={user?.profileImageUrl || user?.imageUrl || hair}
+                  src={user?.imageUrl || hair}
                   alt="User Avatar"
                   className={styles.cardAvatar}
                 />
