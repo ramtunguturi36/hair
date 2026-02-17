@@ -1,58 +1,58 @@
 {
     "Type 1": [
         {
-            "name": "Volumizing Shampoo",
-            "brand": "Pantene",
-            "image": "https://m.media-amazon.com/images/I/61j1-C-O0EL._SL1500_.jpg",
-            "link": "https://www.amazon.in/Pantene-Advanced-Solution-Hairfall-Control/dp/B00791EJW6"
+            "name": "L'Oreal Hyaluron Moisture Shampoo",
+            "brand": "L'Oreal Paris",
+            "image": "https://m.media-amazon.com/images/I/51+6q+P+VJL._SL1000_.jpg",
+            "link": "https://www.amazon.in/s?k=L%27Oreal+Paris+Hyaluron+Moisture+Shampoo"
         },
         {
-            "name": "Lightweight Conditioner",
-            "brand": "Dove",
+            "name": "Biolage Smoothproof Conditioner",
+            "brand": "Matrix",
             "image": "https://m.media-amazon.com/images/I/51pK-jW-cIL._SL1000_.jpg",
-            "link": "https://www.amazon.in/Dove-Daily-Shine-Conditioner-180ml/dp/B006LXB2N0"
+            "link": "https://www.amazon.in/s?k=Biolage+Smoothproof+Conditioner"
         }
     ],
     "Type 2": [
         {
-            "name": "Wave Enhancing Mousse",
+            "name": "Kevin Murphy Killer Waves",
             "brand": "Kevin Murphy",
-            "image": "https://m.media-amazon.com/images/I/41K-m8o8iSL._SX300_SY300_QL70_FMwebp_.jpg",
-            "link": "https://www.amazon.in/Kevin-Murphy-Resort-Beach-Texturiser-Ounce/dp/B005OYGHDK"
+            "image": "https://m.media-amazon.com/images/I/61j1-C-O0EL._SL1500_.jpg",
+            "link": "https://www.amazon.in/s?k=Kevin+Murphy+Killer+Waves"
         },
         {
-            "name": "Frizz Control Serum",
+            "name": "Livon Shake & Spray Serum",
             "brand": "Livon",
-            "image": "https://m.media-amazon.com/images/I/51+6q+P+VJL._SL1000_.jpg",
-            "link": "https://www.amazon.in/Livon-Serum-Rough-Dry-Hair/dp/B005D5F3A2"
+            "image": "https://m.media-amazon.com/images/I/41K-m8o8iSL._SX300_SY300_QL70_FMwebp_.jpg",
+            "link": "https://www.amazon.in/s?k=Livon+Shake+and+Spray+Serum"
         }
     ],
     "Type 3": [
         {
-            "name": "Curl Defining Cream",
+            "name": "Advanced Curl Care Hair Cream",
             "brand": "Arata",
             "image": "https://m.media-amazon.com/images/I/61RCNt+j+oL._SL1080_.jpg",
-            "link": "https://www.amazon.in/Arata-Advanced-Curling-Cream-Organic/dp/B08V8L8T4X"
+            "link": "https://www.amazon.in/s?k=Arata+Advanced+Curl+Care+Hair+Cream"
         },
         {
-            "name": "Hydrating Shampoo",
-            "brand": "Mamaearth",
+            "name": "Fix My Curls Leave-in Cream",
+            "brand": "Fix My Curls",
             "image": "https://m.media-amazon.com/images/I/51A3I4qN+JL._SL1000_.jpg",
-            "link": "https://www.amazon.in/Mamaearth-Shampoo-Conditioner-Control-Paraben/dp/B07JG4J8P4"
+            "link": "https://www.amazon.in/s?k=Fix+My+Curls+Leave-in+Cream"
         }
     ],
     "Type 4": [
         {
-            "name": "Intense Moisture Mask",
-            "brand": "Shea Moisture",
-            "image": "https://m.media-amazon.com/images/I/81I-1a+iW+L._SL1500_.jpg",
-            "link": "https://www.amazon.in/Shea-Moisture-Jamaican-Strengthen-Restore/dp/B00MXD61D4"
-        },
-        {
-            "name": "Leave-in Conditioner",
+            "name": "Shea Butter & Coconut Curling Cream",
             "brand": "Cantu",
             "image": "https://m.media-amazon.com/images/I/71u+2e+g+pL._SL1500_.jpg",
-            "link": "https://www.amazon.in/Cantu-Butter-Natural-Leave-Conditioning/dp/B00F6F2Z1G"
+            "link": "https://www.amazon.in/s?k=Cantu+Shea+Butter+Coconut+Curling+Cream"
+        },
+        {
+            "name": "Jamaica Black Castor Oil Masque",
+            "brand": "Shea Moisture",
+            "image": "https://m.media-amazon.com/images/I/81I-1a+iW+L._SL1500_.jpg",
+            "link": "https://www.amazon.in/s?k=Shea+Moisture+Jamaican+Black+Castor+Oil+Masque"
         }
     ]
 }

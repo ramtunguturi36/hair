@@ -13,6 +13,13 @@ interface Prediction {
     probability: number;
 }
 
+interface AnalysisResponse {
+    analysis: string;
+    hairType: string;
+    confidence: number;
+    probabilities: { name: string; percentage: number }[];
+}
+
 interface ImageUploaderProps {
     imageSrc: string | null;
     setImageSrc: (src: string | null) => void;
@@ -24,6 +31,21 @@ interface ImageUploaderProps {
     isAnalyzing: boolean;
     modelLoaded: boolean;
 }
+
+// Simple Markdown renderer for the analysis result
+const MarkdownRenderer = ({ content }: { content: string }) => {
+    // Basic conversion of markdown-like text to HTML
+    const htmlContent = content
+        .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mt-4 mb-2">$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-6 mb-3">$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>')
+        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*)\*/gim, '<em>$1</em>')
+        .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+        .replace(/\n/gim, '<br />');
+
+    return <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="text-gray-700 leading-relaxed" />;
+};
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
     imageSrc,
@@ -42,6 +64,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     const [showModel, setShowModel] = useState(false);
     const [selectedWebsite, setSelectedWebsite] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+    const [localIsAnalyzing, setLocalIsAnalyzing] = useState(false);
 
     const handleFileChange = async (file: File) => {
         if (credits < 25) {
@@ -71,7 +95,47 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         // Deduct credits from context (saves to Clerk)
         const success = await deductCredits(25);
         if (success) {
-            await classifyImage(selectedFile);
+            setLocalIsAnalyzing(true);
+            try {
+                // Create FormData to send the file
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+
+                // Call the backend API
+                const response = await fetch('http://localhost:5000/api/analyze-hair', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze image');
+                }
+
+                const data: AnalysisResponse = await response.json();
+
+                // Update Analysis Text
+                setAnalysisResult(data.analysis);
+
+                // Update UI Bars (Predictions)
+                if (data.probabilities) {
+                    const mappedPredictions: Prediction[] = data.probabilities.map(p => ({
+                        className: p.name,
+                        probability: p.percentage / 100
+                    }));
+                    // Sort by probability descending
+                    mappedPredictions.sort((a, b) => b.probability - a.probability);
+                    setPredictions(mappedPredictions);
+                } else {
+                    // Fallback if no probabilities
+                    await classifyImage(selectedFile);
+                }
+
+            } catch (error) {
+                console.error('Error analyzing hair:', error);
+                alert('An error occurred during analysis. Please try again.');
+            } finally {
+                setLocalIsAnalyzing(false);
+            }
         } else {
             alert('Failed to deduct credits. Please try again.');
         }
@@ -200,9 +264,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                                 <button
                                     className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                                     onClick={handleAnalyzePhoto}
-                                    disabled={isAnalyzing || !modelLoaded || credits < 25}
+                                    disabled={isAnalyzing || localIsAnalyzing || !modelLoaded || credits < 25}
                                 >
-                                    {isAnalyzing ? '🔍 Analyzing...' : '🚀 Start Analysis'}
+                                    {isAnalyzing || localIsAnalyzing ? '🔍 Analyzing...' : '🚀 Start Analysis'}
                                 </button>
                                 <p className="text-sm text-gray-500 mt-3 font-medium">Uses 25 credits</p>
                             </div>
@@ -261,6 +325,23 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                             <ProductRecommendations
                                 hairType={predictions.reduce((prev, current) => prev.probability > current.probability ? prev : current).className}
                             />
+
+                            {/* Detailed AI Analysis Result */}
+                            {analysisResult && (
+                                <div className="mt-8 bg-purple-50 rounded-2xl p-8 border border-purple-100 shadow-md animate-fade-in-up">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-purple-600 text-white p-2 rounded-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-800">Expert AI Analysis</h3>
+                                    </div>
+                                    <div className="prose prose-purple max-w-none">
+                                        <MarkdownRenderer content={analysisResult} />
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Clear Analysis Button */}
 

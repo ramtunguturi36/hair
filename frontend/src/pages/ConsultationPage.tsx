@@ -31,7 +31,7 @@ const ConsultationPage: React.FC = () => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputText.trim()) return;
 
@@ -46,27 +46,50 @@ const ConsultationPage: React.FC = () => {
         setInputText('');
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiResponses = [
-                "That's a great question! Based on general trichology principles, I'd suggest...",
-                "Could you tell me a bit more about your hair texture? Is it oily or dry?",
-                "I recommend checking our Analysis tool for a more precise answer, but typically...",
-                "Hair loss can be caused by many factors including stress and diet. Have you noticed any recent changes?",
-                "For that specific issue, products with Argan oil or Keratin are usually beneficial."
-            ];
-            const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+        // Send message to backend
+        try {
+            const response = await fetch('http://localhost:5000/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: inputText,
+                    history: messages.map(msg => ({
+                        text: msg.text,
+                        sender: msg.sender
+                    }))
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get response');
+            }
+
+            const data = await response.json();
 
             const newAiMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: randomResponse,
+                text: data.reply,
                 sender: 'ai',
                 timestamp: new Date()
             };
 
             setMessages(prev => [...prev, newAiMessage]);
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            // Fallback error message
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: "I'm having trouble connecting to the server right now. Please try again later.",
+                sender: 'ai',
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
