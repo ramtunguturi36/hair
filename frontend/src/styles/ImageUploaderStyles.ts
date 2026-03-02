@@ -1,19 +1,19 @@
 // ImageUploaderStyles.ts
 const styles = {
-  container: "w-full max-w-5xl mx-auto",
-  image: "w-full h-56 object-cover rounded-md mb-4 shadow-lg",
-  title: "text-3xl font-bold mb-2 text-black",
-  description: "text-gray-600 mb-6",
-  credits: "text-gray-800 mb-4",
-  button: "bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 focus:outline-none transform hover:scale-110 transition-all duration-300 mb-2",
-  analysisContainer: "mt-4 bg-gray-100 p-4 rounded-lg shadow-md",
-  analysisTitle: "text-lg font-bold text-pink-700",
-  analysisItem: "text-gray-800",
-  modalContainer: "fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50",
-  modalContent: "bg-white rounded-lg p-12 w-full max-w-xl h-auto mx-auto shadow-lg",
-  modalTitle: "text-lg font-bold mb-4",
-  websiteButton: "flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600",
-  websiteButtonAlibaba: "flex items-center space-x-2 bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700",
+  container: "w-full max-w-5xl mx-auto drop-shadow-sm",
+  image: "w-full h-56 object-cover rounded-xl mb-6 shadow-glass-md border border-brand-light",
+  title: "text-3xl font-black mb-3 text-transparent bg-clip-text bg-gradient-to-r from-accent-purple to-accent-pink tracking-tight",
+  description: "text-brand-textLight mb-8 font-medium",
+  credits: "text-gray-400 mb-5 font-bold tracking-wide",
+  button: "btn-primary mb-4",
+  analysisContainer: "mt-6 bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-glass-md border border-brand-light",
+  analysisTitle: "text-xl font-bold text-accent-purple mb-4",
+  analysisItem: "text-brand-textDark font-semibold",
+  modalContainer: "fixed inset-0 flex items-center justify-center z-[100] bg-brand-textDark/40 backdrop-blur-sm",
+  modalContent: "bg-white border border-brand-light rounded-2xl p-10 w-full max-w-xl h-auto mx-auto shadow-glass-lg animate-slide-up-fade relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-accent-purple/5 before:to-transparent before:pointer-events-none text-brand-textDark",
+  modalTitle: "text-2xl font-black mb-6 text-brand-textDark tracking-tight",
+  websiteButton: "btn-secondary !py-2 !px-4 text-sm flex items-center justify-center space-x-3 w-full sm:w-auto",
+  websiteButtonAlibaba: "btn-secondary !py-2 !px-4 text-sm flex items-center justify-center space-x-3 w-full sm:w-auto hover:!border-accent-pink/50 hover:!shadow-glow-pink",
 };
 
 export default styles;

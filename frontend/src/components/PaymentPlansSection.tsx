@@ -1,5 +1,4 @@
 // PaymentPlansSection.jsx
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -53,7 +52,7 @@ const PaymentPlansSection = () => {
     },
   ];
 
-  const handleCheckout = async (plan) => {
+  const handleCheckout = async (plan: any) => {
     // Require login before checkout
     if (!isSignedIn) {
       alert('Please login or sign up to purchase credits.');
@@ -61,7 +60,7 @@ const PaymentPlansSection = () => {
       return;
     }
 
-    const stripe = await stripePromise; 
+    const stripe = await stripePromise;
     if (!stripe) {
       console.error("Stripe failed to load");
       return;
@@ -92,14 +91,14 @@ const PaymentPlansSection = () => {
         Choose Your Hair Analysis Credits
       </h3>
       <p className="text-center text-gray-500 mb-8">
-        Get AI-powered hair analysis and personalized recommendations. 
+        Get AI-powered hair analysis and personalized recommendations.
         Purchase credits that fit your needs - no monthly commitments!
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {plans.map((plan) => (
-          <div 
-            key={plan.name} 
+          <div
+            key={plan.name}
             className={`rounded-lg shadow-lg p-8 text-center border-2 ${plan.popular ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'}`}
           >
             {plan.popular && (
@@ -119,27 +118,27 @@ const PaymentPlansSection = () => {
             </div>
 
             <ul className="text-left text-gray-700 mb-6 space-y-2">
-                {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                        <FaCheckCircle className="text-green-500 mr-2" />
-                        {feature}
-                    </li>
-                ))}
+              {plan.features.map((feature, index) => (
+                <li key={index} className="flex items-center">
+                  <FaCheckCircle className="text-green-500 mr-2" />
+                  {feature}
+                </li>
+              ))}
             </ul>
 
             <button
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 font-semibold"
-                onClick={() => handleCheckout(plan)}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 font-semibold"
+              onClick={() => handleCheckout(plan)}
             >
-                Buy Credits
+              Buy Credits
             </button>
 
-            </div>
-                ))}
-            </div>
+          </div>
+        ))}
+      </div>
 
-        </section>
-      );
+    </section>
+  );
 };
 
 export default PaymentPlansSection;

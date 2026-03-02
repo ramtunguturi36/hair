@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, useClerk } from '@clerk/clerk-react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import styles from '../styles/NavbarStyles';
-import { logo }from '../assets/index';
+import { logo } from '../assets/index';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { isSignedIn } = useAuth();
   const { signOut } = useClerk();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLogoLoaded, setIsLogoLoaded] = useState(true);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -24,11 +24,11 @@ const Navbar: React.FC = () => {
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
           {isLogoLoaded ? (
-            <img 
-              src={logo} 
-              alt="Beauty" 
-              onError={() => setIsLogoLoaded(false)} 
-              className="w-16 h-16 md:w-20 md:h-20" 
+            <img
+              src={logo}
+              alt="Beauty"
+              onError={() => setIsLogoLoaded(false)}
+              className="w-16 h-16 md:w-20 md:h-20"
             />
           ) : (
             "Beauty"
@@ -41,20 +41,20 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-       
-        <ul className={`${styles.navLinks} ${isMenuOpen ? styles.openMenu : styles.closedMenu}`}>
+
+        <ul className={isMenuOpen ? styles.mobileMenu : styles.navLinks}>
           <li>
-            <Link to="/" className={styles.link}>About</Link>
+            <Link to="/about" className={isMenuOpen ? styles.mobileLink : styles.link}>About</Link>
           </li>
           <li>
-            <Link to="/pricing" className={styles.link}>Pricing</Link>
+            <Link to="/pricing" className={isMenuOpen ? styles.mobileLink : styles.link}>Pricing</Link>
           </li>
           <li>
-            <Link to="/about" className={styles.link}>About</Link>
+            <Link to="/contact" className={isMenuOpen ? styles.mobileLink : styles.link}>Contact Us</Link>
           </li>
         </ul>
 
-        
+
         <div className={styles.actionButtons}>
           {isSignedIn ? (
             <>

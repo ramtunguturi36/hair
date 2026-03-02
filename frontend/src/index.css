@@ -7,45 +7,55 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-brand-dark text-brand-textLight antialiased overflow-x-hidden selection:bg-accent-purple selection:text-white;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
+    @apply tracking-tighter text-brand-textDark;
+  }
+  
+  /* Custom Scrollbar for a premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-brand-surface;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-accent-purple transition-colors;
   }
 }
 
 @layer components {
+  /* Premium Primary Button */
   .btn-primary {
-    @apply bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 hover:scale-[1.02] active:scale-95 transition-all duration-300;
+    @apply relative overflow-hidden bg-gradient-to-r from-accent-purple to-accent-pink text-white font-bold py-3 px-8 rounded-full shadow-glow-purple hover:shadow-glow-pink hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300 z-10 before:absolute before:inset-0 before:bg-white/20 before:translate-y-full hover:before:translate-y-0 before:transition-transform before:duration-300 before:z-[-1];
   }
   
+  .btn-secondary {
+    @apply relative overflow-hidden bg-brand-surface text-white border border-brand-light font-bold py-3 px-8 rounded-full shadow-glass-sm hover:border-accent-cyan/50 hover:shadow-glass-md hover:-translate-y-1 hover:scale-[1.02] active:scale-95 transition-all duration-300;
+  }
+
+  /* Advanced Glassmorphism Panel */
   .glass-panel {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+    @apply bg-brand-surface/60 backdrop-blur-xl border border-white/10 shadow-glass-md rounded-2xl relative overflow-hidden;
   }
   
+  .glass-panel::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 z-[-1];
+  }
+
+  /* Smooth Card Hover */
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+    @apply transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-glow-purple hover:border-accent-purple/50;
   }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-cyan via-accent-purple to-accent-pink animate-gradient-x;
   }
-  
-  .animate-fade-in-up {
-    animation: fadeInUp 0.5s ease-out forwards;
-  }
-  
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+
+  /* Removed default fadeInUp in favor of tailwind slide-up-fade */
 }

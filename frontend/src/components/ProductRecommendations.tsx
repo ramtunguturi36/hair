@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import catalog from '../data/productCatalog.json';
-import { FaShoppingBag } from 'react-icons/fa';
+import { FaShoppingBag, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useUser } from '@clerk/clerk-react';
 
 interface Product {
     name: string;
@@ -14,9 +15,49 @@ interface ProductRecommendationsProps {
 }
 
 const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairType }) => {
-    // Simple matching logic - checking if hairType string contains key
-    // e.g. "Type 4C" contains "Type 4"
-    // If no match, default to Type 2 or generic
+    const { user } = useUser();
+    const [savedProducts, setSavedProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        if (user) {
+            fetchSavedProducts();
+        }
+    }, [user]);
+
+    const fetchSavedProducts = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/saved-products/${user?.id}`);
+            const data = await response.json();
+            setSavedProducts(data.map((item: any) => item.product));
+        } catch (error) {
+            console.error("Failed to fetch saved products:", error);
+        }
+    };
+
+    const isSaved = (productName: string) => savedProducts.some(p => p.name === productName);
+
+    const toggleSave = async (product: Product) => {
+        if (!user) return;
+        const alreadySaved = isSaved(product.name);
+        try {
+            if (alreadySaved) {
+                await fetch(`http://localhost:5000/api/saved-products/${user.id}/${encodeURIComponent(product.name)}`, {
+                    method: 'DELETE'
+                });
+                setSavedProducts(prev => prev.filter(p => p.name !== product.name));
+            } else {
+                await fetch('http://localhost:5000/api/saved-products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id, product })
+                });
+                setSavedProducts(prev => [...prev, product]);
+            }
+        } catch (error) {
+            console.error("Error toggling save:", error);
+        }
+    };
+
     const getProducts = (type: string): Product[] => {
         if (type.includes('Type 1') || type.includes('Straight')) return (catalog as any)["Type 1"];
         if (type.includes('Type 2') || type.includes('Wavy')) return (catalog as any)["Type 2"];
@@ -54,18 +95,31 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairTyp
                             <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-gray-700 shadow-sm">
                                 {product.brand}
                             </div>
+                            <button
+                                onClick={() => toggleSave(product)}
+                                className="absolute top-2 left-2 p-2 bg-white/90 backdrop-blur-sm rounded-full text-purple-600 shadow-sm hover:scale-110 transition-transform"
+                                title={isSaved(product.name) ? "Unsave Product" : "Save Product"}
+                            >
+                                {isSaved(product.name) ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+                            </button>
                         </div>
 
                         <div className="p-5 flex-grow flex flex-col">
                             <h4 className="font-bold text-gray-800 mb-1 line-clamp-2">{product.name}</h4>
                             <p className="text-sm text-gray-500 mb-4 line-clamp-2">High-quality care for your specific hair needs.</p>
 
-                            <div className="mt-auto">
+                            <div className="mt-auto flex gap-2 w-full">
+                                <button
+                                    onClick={() => toggleSave(product)}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-purple-50 text-purple-700 px-3 py-3 rounded-xl hover:bg-purple-100 transition-colors duration-300 font-medium border border-purple-100"
+                                >
+                                    {isSaved(product.name) ? "Saved" : "Save"}
+                                </button>
                                 <a
                                     href={product.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-xl hover:bg-purple-600 transition-colors duration-300 font-medium group-hover:shadow-lg group-hover:shadow-purple-200"
+                                    className="flex-[2] flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-xl hover:bg-purple-600 transition-colors duration-300 font-medium group-hover:shadow-lg group-hover:shadow-purple-200"
                                 >
                                     <FaShoppingBag />
                                     Buy Now

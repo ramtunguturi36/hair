@@ -1,31 +1,18 @@
 const HeroSectionStyles = {
-  section: "relative h-screen flex flex-col md:flex-row items-center justify-between px-6 md:px-20 overflow-hidden",
-  textContainer: "z-10 text-center md:text-left max-w-lg animate-fade-in-up",
-  title: "text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 drop-shadow-lg",
-  description: "text-lg md:text-xl text-gray-200 mb-8 leading-relaxed",
-  getStartedButton: "btn-primary text-lg px-8 py-4 shadow-2xl hover:shadow-purple-500/50",
+  section: "relative min-h-[90vh] flex flex-col md:flex-row items-center justify-between px-6 md:px-20 overflow-hidden bg-brand-surface isolate",
+  textContainer: "z-10 text-center md:text-left max-w-2xl animate-slide-up-fade",
+  title: "text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-brand-textDark via-brand-textLight to-gray-400 leading-[1.1] mb-6 drop-shadow-sm tracking-tight",
+  description: "text-lg md:text-2xl text-brand-textLight mb-10 leading-relaxed font-medium max-w-xl",
+  getStartedButton: "btn-primary text-lg px-10 py-5 group flex items-center justify-center gap-3 shadow-glow-purple",
 
-  // Moved gradientCircle into canvasContainer to ensure it’s behind the 3D model
-  canvasContainer: "absolute inset-0 z-0",
+  // Modern atmospheric background and 3D canvas
+  canvasContainer: "absolute inset-0 z-0 pointer-events-none md:pointer-events-auto",
   gradientCircle: `
-    absolute inset-0 w-full h-full rounded-full bg-gradient-to-r from-pink-500 via-yellow-500 to-purple-500 
-    blur-3xl opacity-70 animate-gradientMove z-0
+    absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] 
+    rounded-full bg-gradient-to-r from-accent-purple/10 via-accent-cyan/10 to-accent-pink/10 
+    blur-[100px] opacity-80 animate-pulse-glow mix-blend-multiply -z-10
   `,
 };
 
-// Define animation for gradient movement
-const styleElement = document.createElement('style');
-styleElement.innerHTML = `
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  .animate-gradientMove {
-    background-size: 200% 200%;
-    animation: gradientMove 10s ease infinite;
-  }
-`;
-document.head.appendChild(styleElement);
-
 export default HeroSectionStyles;
+

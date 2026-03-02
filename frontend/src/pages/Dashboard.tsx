@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd, FaHeartbeat, FaMagic, FaUserCog } from 'react-icons/fa';
+import { FaCamera, FaChartLine, FaHistory, FaBars, FaSignOutAlt, FaCoins, FaUserMd, FaHeartbeat, FaMagic, FaUserCog, FaHeart } from 'react-icons/fa';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useCredits } from '../context/CreditContext';
 import { logo, hair } from '../assets/index';
@@ -113,6 +113,13 @@ const Dashboard: React.FC = () => {
             >
               <FaMagic className={`${styles.navIcon} ${location.pathname === '/dashboard/style-guide' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
               <span className={styles.navText}>Style Guide</span>
+            </Link>
+            <Link
+              to="/dashboard/saved"
+              className={`${styles.navLink} ${location.pathname === '/dashboard/saved' ? styles.activeLink : ''} `}
+            >
+              <FaHeart className={`${styles.navIcon} ${location.pathname === '/dashboard/saved' ? 'text-white' : 'text-gray-500 group-hover:text-purple-600'} `} />
+              <span className={styles.navText}>Saved</span>
             </Link>
             <Link
               to="/dashboard/profile"

@@ -130,6 +130,39 @@ app.post('/api/history', (req, res) => {
   res.json({ success: true, entry: newEntry });
 });
 
+// Helper for Saved Products
+const SAVED_PRODUCTS_FILE = path.join(__dirname, 'saved_products.json');
+const readSavedProducts = () => {
+  try {
+    if (!fs.existsSync(SAVED_PRODUCTS_FILE)) return [];
+    return JSON.parse(fs.readFileSync(SAVED_PRODUCTS_FILE, 'utf8'));
+  } catch (error) { return []; }
+};
+const writeSavedProducts = (data) => fs.writeFileSync(SAVED_PRODUCTS_FILE, JSON.stringify(data, null, 2));
+
+app.get('/api/saved-products/:userId', (req, res) => {
+  const all = readSavedProducts();
+  res.json(all.filter(p => p.userId === req.params.userId));
+});
+
+app.post('/api/saved-products', (req, res) => {
+  const { userId, product } = req.body;
+  const all = readSavedProducts();
+  if (!all.find(p => p.userId === userId && p.product.name === product.name)) {
+    all.push({ id: Date.now().toString(), userId, product, savedAt: new Date().toISOString() });
+    writeSavedProducts(all);
+  }
+  res.json({ success: true });
+});
+
+app.delete('/api/saved-products/:userId/:productName', (req, res) => {
+  const { userId, productName } = req.params;
+  let all = readSavedProducts();
+  all = all.filter(p => !(p.userId === userId && p.product.name === productName));
+  writeSavedProducts(all);
+  res.json({ success: true });
+});
+
 // Helper function to convert buffer to base64 for Gemini
 function fileToGenerativePart(buffer, mimeType) {
   return {
@@ -210,10 +243,12 @@ app.post('/api/chat', async (req, res) => {
   try {
     const { message, history } = req.body;
 
-    // DEBUG: Initialize here to ensure latest key
     const currentKey = process.env.GEMINI_API_KEY;
     const localGenAI = new GoogleGenerativeAI(currentKey);
-    const model = localGenAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = localGenAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      systemInstruction: "You are an expert trichologist and hair care consultant. IMPORTANT: Your sole purpose is to answer questions related to hair care, scalp health, hair products, and hairstyling. If the user asks a question that is NOT related to hair or these topics, you must gracefully decline to answer and simply state: 'I can only help with hair-related topics.' Do not provide any other assistance for non-hair queries."
+    });
 
     let formattedHistory = history ? history.map(msg => ({
       role: msg.sender === 'user' ? 'user' : 'model',
@@ -238,6 +273,86 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     console.error('Error in chat:', error);
     res.status(500).json({ error: 'Failed to chat with AI', details: error.message });
+  }
+});
+
+// POST Analyze Face Shape with Gemini
+app.post('/api/analyze-face', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const currentKey = process.env.GEMINI_API_KEY;
+    const localGenAI = new GoogleGenerativeAI(currentKey);
+    const model = localGenAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: { responseMimeType: "application/json" }
+    });
+
+    const prompt = `Analyze this face image. Return a JSON object with this structure:
+    {
+      "faceShape": "Short string of the dominant face shape e.g. 'Oval', 'Round', 'Square', 'Heart', 'Diamond', 'Oblong'",
+      "description": "Short explanation of why it is this shape based on features.",
+      "recommendedStyles": ["Style 1", "Style 2", "Style 3", "Style 4"],
+      "confidence": 85
+    }
+    IMPORTANT: Return ONLY the raw JSON string. Do not wrap it in markdown code blocks.`;
+
+    const imagePart = fileToGenerativePart(req.file.buffer, req.file.mimetype);
+
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
+    const text = response.text();
+
+    const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const jsonResponse = JSON.parse(cleanedText);
+
+    res.json(jsonResponse);
+
+  } catch (error) {
+    console.error('Error analyzing face:', error);
+    res.status(500).json({ error: 'Failed to analyze face', details: error.message });
+  }
+});
+
+// POST Analyze Hair Loss Risk with Gemini
+app.post('/api/analyze-risk', async (req, res) => {
+  try {
+    const { answers } = req.body;
+
+    const currentKey = process.env.GEMINI_API_KEY;
+    const localGenAI = new GoogleGenerativeAI(currentKey);
+    const model = localGenAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: { responseMimeType: "application/json" }
+    });
+
+    const prompt = `Analyze the following user survey answers about their hair loss risk factors:
+    ${JSON.stringify(answers)}
+    
+    Act as an expert trichologist. Return a JSON object with this structure:
+    {
+      "riskLevel": "Low Risk" or "Moderate Risk" or "High Risk",
+      "score": 45, // Number from 0 to 100 representing risk severity
+      "explanation": "A detailed 2-paragraph explanation of their specific risk factors based on their answers.",
+      "actionableAdvice": ["Advice 1", "Advice 2", "Advice 3"],
+      "recommendedIngredients": ["Ingredient 1", "Ingredient 2"]
+    }
+    IMPORTANT: Return ONLY the raw JSON string. Do not wrap it in markdown code blocks.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const jsonResponse = JSON.parse(cleanedText);
+
+    res.json(jsonResponse);
+
+  } catch (error) {
+    console.error('Error analyzing risk:', error);
+    res.status(500).json({ error: 'Failed to analyze risk', details: error.message });
   }
 });
 

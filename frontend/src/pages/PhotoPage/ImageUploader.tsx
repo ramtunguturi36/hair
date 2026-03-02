@@ -47,6 +47,8 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
     return <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="text-gray-700 leading-relaxed" />;
 };
 
+import { useUser } from '@clerk/clerk-react';
+
 const ImageUploader: React.FC<ImageUploaderProps> = ({
     imageSrc,
     setImageSrc,
@@ -58,6 +60,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     isAnalyzing,
     modelLoaded
 }) => {
+    const { user } = useUser();
 
     const navigate = useNavigate();
     const { credits, deductCredits } = useCredits();
@@ -125,6 +128,25 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     // Sort by probability descending
                     mappedPredictions.sort((a, b) => b.probability - a.probability);
                     setPredictions(mappedPredictions);
+
+                    // Try saving history here using fetch
+                    try {
+                        if (user) {
+                            await fetch('http://localhost:5000/api/history', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    userId: user.id,
+                                    date: new Date().toISOString(),
+                                    result: mappedPredictions[0]?.className || data.hairType,
+                                    image: imageSrc
+                                })
+                            });
+                            console.log('Gemini analysis saved to history');
+                        }
+                    } catch (historyError) {
+                        console.error('Error saving history:', historyError);
+                    }
                 } else {
                     // Fallback if no probabilities
                     await classifyImage(selectedFile);

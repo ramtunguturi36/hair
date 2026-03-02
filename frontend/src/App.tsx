@@ -12,8 +12,11 @@ import HairLossPage from './pages/HairLossPage';
 import StyleGuidePage from './pages/StyleGuidePage';
 import ProfilePage from './pages/ProfilePage';
 
-
-
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import SavedProductsPage from './pages/SavedProductsPage';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const App: React.FC = () => {
@@ -23,6 +26,15 @@ const App: React.FC = () => {
         <Routes>
           {/* Home page */}
           <Route index element={<Home />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/pricing" element={
+            <>
+              <Navbar />
+              <PricingPage />
+              <Footer />
+            </>
+          } />
 
           {/* Login route, redirect signed-in users to "/dashboard/analysis" */}
           <Route path="/login" element={
@@ -62,6 +74,7 @@ const App: React.FC = () => {
             <Route path="hair-loss" element={<HairLossPage />} />
             <Route path="style-guide" element={<StyleGuidePage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="saved" element={<SavedProductsPage />} />
           </Route>
         </Routes>
       </ErrorBoundary>

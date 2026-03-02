@@ -4,8 +4,10 @@ import { FaHeartbeat, FaExclamationTriangle, FaCheckCircle, FaChevronRight } fro
 const HairLossPage: React.FC = () => {
     const [step, setStep] = useState(1);
     const [score, setScore] = useState(0);
-
     const [showResult, setShowResult] = useState(false);
+    const [userAnswers, setUserAnswers] = useState<string[]>([]);
+    const [aiResult, setAiResult] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const questions = [
         {
@@ -46,22 +48,53 @@ const HairLossPage: React.FC = () => {
         }
     ];
 
-    const handleAnswer = (value: number) => {
-        setScore(prev => prev + value);
-        if (step < questions.length) {
-            setStep(step + 1);
-        } else {
-            setShowResult(true);
+    const submitAnalysis = async (answersToSubmit: string[]) => {
+        setIsLoading(true);
+        setShowResult(true);
+        try {
+            const response = await fetch('http://localhost:5000/api/analyze-risk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answers: answersToSubmit })
+            });
+            const data = await response.json();
+            setAiResult(data);
+        } catch (error) {
+            console.error('Failed to get ML risk analysis:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const getRiskLevel = () => {
+    const handleAnswer = (optionLabel: string, value: number) => {
+        const currentQ = questions[step - 1].question;
+        const answerText = `Q: ${currentQ} A: ${optionLabel}`;
+        const newAnswers = [...userAnswers, answerText];
+
+        setScore(prev => prev + value);
+        setUserAnswers(newAnswers);
+
+        if (step < questions.length) {
+            setStep(step + 1);
+        } else {
+            submitAnalysis(newAnswers);
+        }
+    };
+
+    const getFallbackResult = () => {
         if (score < 30) return { level: "Low Risk", color: "text-green-600", bg: "bg-green-100", icon: FaCheckCircle, advice: "Your hair health looks great! Keep up your good habits." };
         if (score < 70) return { level: "Moderate Risk", color: "text-yellow-600", bg: "bg-yellow-100", icon: FaExclamationTriangle, advice: "You have some risk factors. Consider improving your diet and managing stress." };
         return { level: "High Risk", color: "text-red-600", bg: "bg-red-100", icon: FaHeartbeat, advice: "You are at higher risk. We recommend consulting a specialist and reviewing your hair care routine." };
     };
 
-    const result = getRiskLevel();
+    const result = aiResult ? {
+        level: aiResult.riskLevel,
+        color: aiResult.riskLevel === "Low Risk" ? "text-green-600" : aiResult.riskLevel === "Moderate Risk" ? "text-yellow-600" : "text-red-600",
+        bg: aiResult.riskLevel === "Low Risk" ? "bg-green-100" : aiResult.riskLevel === "Moderate Risk" ? "bg-yellow-100" : "bg-red-100",
+        icon: aiResult.riskLevel === "Low Risk" ? FaCheckCircle : aiResult.riskLevel === "Moderate Risk" ? FaExclamationTriangle : FaHeartbeat,
+        advice: aiResult.explanation
+    } : getFallbackResult();
+
     const ResultIcon = result.icon;
 
     return (
@@ -90,7 +123,7 @@ const HairLossPage: React.FC = () => {
                         {questions[step - 1].options.map((option, idx) => (
                             <button
                                 key={idx}
-                                onClick={() => handleAnswer(option.value)}
+                                onClick={() => handleAnswer(option.label, option.value)}
                                 className="w-full text-left p-6 rounded-2xl border border-gray-100 hover:border-purple-200 bg-white hover:bg-purple-50 transition-all duration-300 flex items-center justify-between group shadow-sm hover:shadow-md"
                             >
                                 <span className="text-lg font-medium text-gray-700 group-hover:text-purple-700">{option.label}</span>
@@ -101,31 +134,49 @@ const HairLossPage: React.FC = () => {
                 </div>
             ) : (
                 <div className="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-12 text-center animate-fade-in-up">
-                    <div className={`w-24 h-24 rounded-full ${result.bg} flex items-center justify-center mx-auto mb-6 shadow-lg`}>
-                        <ResultIcon className={`text-5xl ${result.color}`} />
-                    </div>
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center py-10">
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500 mb-4"></div>
+                            <p className="text-xl text-gray-600">AI is analyzing your risk factors...</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className={`w-24 h-24 rounded-full ${result.bg} flex items-center justify-center mx-auto mb-6 shadow-lg`}>
+                                <ResultIcon className={`text-5xl ${result.color}`} />
+                            </div>
 
-                    <h2 className="text-4xl font-extrabold text-gray-800 mb-2">Your Risk Level: <span className={result.color}>{result.level}</span></h2>
-                    <div className="w-64 h-4 bg-gray-200 rounded-full mx-auto my-6 overflow-hidden relative">
-                        {/* Gradient scale */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 opacity-30"></div>
-                        {/* Indicator */}
-                        <div
-                            className="absolute top-0 bottom-0 w-2 bg-gray-800 shadow-md transform -translate-x-1/2 transition-all duration-1000 ease-out"
-                            style={{ left: `${Math.min(score, 100)}%` }}
-                        ></div>
-                    </div>
+                            <h2 className="text-4xl font-extrabold text-gray-800 mb-2">Your Risk Level: <span className={result.color}>{result.level}</span></h2>
+                            <div className="w-64 h-4 bg-gray-200 rounded-full mx-auto my-6 overflow-hidden relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 opacity-30"></div>
+                                <div
+                                    className="absolute top-0 bottom-0 w-2 bg-gray-800 shadow-md transform -translate-x-1/2 transition-all duration-1000 ease-out"
+                                    style={{ left: `${Math.min(aiResult ? aiResult.score : score, 100)}%` }}
+                                ></div>
+                            </div>
 
-                    <p className="text-xl text-gray-600 max-w-xl mx-auto leading-relaxed mb-10">
-                        {result.advice}
-                    </p>
+                            <p className="text-xl text-gray-600 max-w-xl mx-auto leading-relaxed mb-6">
+                                {result.advice}
+                            </p>
 
-                    <button
-                        onClick={() => { setStep(1); setScore(0); setShowResult(false); }}
-                        className="btn-primary text-lg"
-                    >
-                        Retake Assessment
-                    </button>
+                            {aiResult && aiResult.actionableAdvice && (
+                                <div className="text-left bg-purple-50 p-6 rounded-2xl mb-10 border border-purple-100 shadow-sm inline-block w-full max-w-xl">
+                                    <h3 className="font-bold text-lg mb-3 text-purple-900 border-b border-purple-200 pb-2">Actionable AI Advice</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-purple-800">
+                                        {aiResult.actionableAdvice.map((advice: string, idx: number) => (
+                                            <li key={idx} className="text-md">{advice}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={() => { setStep(1); setScore(0); setUserAnswers([]); setAiResult(null); setShowResult(false); }}
+                                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all w-full md:w-auto"
+                            >
+                                Retake Assessment
+                            </button>
+                        </>
+                    )}
                 </div>
             )}
         </div>

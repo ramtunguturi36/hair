@@ -9,6 +9,19 @@ interface Message {
     timestamp: Date;
 }
 
+const MarkdownRenderer = ({ content, isUser }: { content: string, isUser: boolean }) => {
+    const htmlContent = content
+        .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mt-4 mb-2">$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mt-6 mb-3">$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+        .replace(/\n/gim, '<br />');
+
+    return <div dangerouslySetInnerHTML={{ __html: htmlContent }} className={`text-sm md:text-base leading-relaxed ${isUser ? 'text-white' : 'text-gray-800'}`} />;
+};
+
 const ConsultationPage: React.FC = () => {
     const { user } = useUser();
     const [messages, setMessages] = useState<Message[]>([
@@ -128,7 +141,7 @@ const ConsultationPage: React.FC = () => {
                                     ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none'
                                     : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
                                     }`}>
-                                    <p className="text-sm md:text-base leading-relaxed">{msg.text}</p>
+                                    <MarkdownRenderer content={msg.text} isUser={msg.sender === 'user'} />
                                     <span className={`text-[10px] block mt-1 opacity-70 ${msg.sender === 'user' ? 'text-indigo-100 text-right' : 'text-gray-400'
                                         }`}>
                                         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
