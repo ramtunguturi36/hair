@@ -17,6 +17,12 @@ console.log("Server using Gemini API Key:", key ? key.substring(0, 10) + "..." :
 
 const app = express();
 const PORT = 5000;
+const PRIMARY_GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_FALLBACK_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.5-pro'];
+const ADMIN_USER_IDS = (process.env.ADMIN_USER_IDS || '')
+  .split(',')
+  .map(id => id.trim().replace(/^['\"]|['\"]$/g, ''))
+  .filter(Boolean);
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -33,7 +39,7 @@ app.use(express.json({ limit: '50mb' }));
 
 // Stripe Payment Route
 app.post('/create-checkout-session', async (req, res) => {
-  const { planId, planAmount, planCurrency, credits } = req.body;
+  const { planId, planAmount, planCurrency, credits, userId } = req.body;
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -56,6 +62,7 @@ app.post('/create-checkout-session', async (req, res) => {
       cancel_url: 'http://localhost:5173/dashboard/pricing?payment=cancelled',
       metadata: {
         credits: credits, // Store credits to add after successful payment
+        userId: userId || '',
       },
     });
 
@@ -75,6 +82,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const HISTORY_FILE = path.join(__dirname, 'history.json');
+const PROFILE_FILE = path.join(__dirname, 'profiles.json');
+const PROGRESS_FILE = path.join(__dirname, 'progress.json');
+const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
+const PAYMENTS_FILE = path.join(__dirname, 'payments.json');
+const FLAGS_FILE = path.join(__dirname, 'ai_flags.json');
 
 // Helper to read history
 const readHistory = () => {
@@ -97,6 +109,31 @@ const writeHistory = (data) => {
   } catch (error) {
     console.error("Error writing history:", error);
   }
+};
+
+const readJsonArray = (filePath) => {
+  try {
+    if (!fs.existsSync(filePath)) return [];
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) {
+    console.error(`Error reading ${filePath}:`, error);
+    return [];
+  }
+};
+
+const writeJsonArray = (filePath, data) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error(`Error writing ${filePath}:`, error);
+  }
+};
+
+const isAdminUser = (userId) => {
+  if (!userId) return false;
+  if (ADMIN_USER_IDS.includes('*')) return true;
+  if (ADMIN_USER_IDS.length === 0) return userId.toLowerCase().includes('admin');
+  return ADMIN_USER_IDS.some(adminId => adminId.toLowerCase() === userId.toLowerCase());
 };
 
 // GET History for a user
@@ -163,6 +200,249 @@ app.delete('/api/saved-products/:userId/:productName', (req, res) => {
   res.json({ success: true });
 });
 
+// Profile preferences and goals
+app.get('/api/profile/:userId', (req, res) => {
+  const { userId } = req.params;
+  const profiles = readJsonArray(PROFILE_FILE);
+  const profile = profiles.find(p => p.userId === userId);
+  res.json(profile || {
+    userId,
+    concerns: [],
+    budgetRange: 'mid',
+    allergies: [],
+    goals: [],
+    reminderTime: '20:00',
+    reminderDays: ['Mon', 'Wed', 'Sat']
+  });
+});
+
+app.put('/api/profile/:userId', (req, res) => {
+  const { userId } = req.params;
+  const incoming = req.body || {};
+  const profiles = readJsonArray(PROFILE_FILE);
+  const idx = profiles.findIndex(p => p.userId === userId);
+  const profile = {
+    userId,
+    concerns: Array.isArray(incoming.concerns) ? incoming.concerns : [],
+    budgetRange: incoming.budgetRange || 'mid',
+    allergies: Array.isArray(incoming.allergies) ? incoming.allergies : [],
+    goals: Array.isArray(incoming.goals) ? incoming.goals : [],
+    reminderTime: incoming.reminderTime || '20:00',
+    reminderDays: Array.isArray(incoming.reminderDays) ? incoming.reminderDays : ['Mon', 'Wed', 'Sat'],
+    updatedAt: new Date().toISOString()
+  };
+
+  if (idx >= 0) profiles[idx] = { ...profiles[idx], ...profile };
+  else profiles.push(profile);
+
+  writeJsonArray(PROFILE_FILE, profiles);
+  res.json({ success: true, profile });
+});
+
+// Progress tracking: before/after entries and trend summary from history
+app.post('/api/progress/before-after', (req, res) => {
+  const { userId, beforeImage, afterImage, notes, date } = req.body;
+  if (!userId || !beforeImage || !afterImage) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const all = readJsonArray(PROGRESS_FILE);
+  const entry = {
+    id: Date.now().toString(),
+    userId,
+    beforeImage,
+    afterImage,
+    notes: notes || '',
+    date: date || new Date().toISOString()
+  };
+  all.push(entry);
+  writeJsonArray(PROGRESS_FILE, all);
+  res.json({ success: true, entry });
+});
+
+app.get('/api/progress/:userId', (req, res) => {
+  const { userId } = req.params;
+  const progressEntries = readJsonArray(PROGRESS_FILE).filter(item => item.userId === userId);
+  const userHistory = readHistory().filter(item => item.userId === userId);
+
+  const trendByType = userHistory.reduce((acc, item) => {
+    const key = item.result || 'Unknown';
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const timeline = userHistory
+    .map(item => ({ date: item.date, result: item.result }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  res.json({
+    beforeAfter: progressEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    trends: Object.entries(trendByType).map(([name, count]) => ({ name, count })),
+    timeline
+  });
+});
+
+// Notification system (in-app + simulated email channel)
+app.get('/api/notifications/:userId', (req, res) => {
+  const { userId } = req.params;
+  const all = readJsonArray(NOTIFICATIONS_FILE);
+  const items = all
+    .filter(n => n.userId === userId)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  res.json(items);
+});
+
+app.post('/api/notifications', (req, res) => {
+  const { userId, title, message, type = 'in-app', channel = 'in-app' } = req.body;
+  if (!userId || !title || !message) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const all = readJsonArray(NOTIFICATIONS_FILE);
+  const item = {
+    id: Date.now().toString(),
+    userId,
+    title,
+    message,
+    type,
+    channel,
+    read: false,
+    status: channel === 'email' ? 'sent-simulated' : 'delivered',
+    createdAt: new Date().toISOString()
+  };
+  all.push(item);
+  writeJsonArray(NOTIFICATIONS_FILE, all);
+
+  if (channel === 'email') {
+    console.log(`[EMAIL-SIMULATED] To user ${userId}: ${title} - ${message}`);
+  }
+
+  res.json({ success: true, notification: item });
+});
+
+app.patch('/api/notifications/:userId/:notificationId/read', (req, res) => {
+  const { userId, notificationId } = req.params;
+  const all = readJsonArray(NOTIFICATIONS_FILE);
+  const idx = all.findIndex(n => n.userId === userId && n.id === notificationId);
+  if (idx === -1) return res.status(404).json({ error: 'Notification not found' });
+  all[idx].read = true;
+  writeJsonArray(NOTIFICATIONS_FILE, all);
+  res.json({ success: true });
+});
+
+app.post('/api/notifications/low-credit', (req, res) => {
+  const { userId, credits } = req.body;
+  if (!userId || typeof credits !== 'number') {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  if (credits >= 40) {
+    return res.json({ success: true, skipped: true, reason: 'credits-above-threshold' });
+  }
+
+  const all = readJsonArray(NOTIFICATIONS_FILE);
+  const now = Date.now();
+  const recent = all.find(
+    n => n.userId === userId && n.type === 'low-credit' && (now - new Date(n.createdAt).getTime()) < 24 * 60 * 60 * 1000
+  );
+  if (recent) {
+    return res.json({ success: true, skipped: true, reason: 'already-sent-today' });
+  }
+
+  const base = {
+    id: `${now}`,
+    userId,
+    type: 'low-credit',
+    title: 'Low Credit Alert',
+    message: `You have only ${credits} credits left. Refill to continue analyses.`,
+    read: false,
+    createdAt: new Date().toISOString()
+  };
+
+  all.push({ ...base, channel: 'in-app', status: 'delivered' });
+  all.push({ ...base, id: `${now + 1}`, channel: 'email', status: 'sent-simulated' });
+  writeJsonArray(NOTIFICATIONS_FILE, all);
+  console.log(`[EMAIL-SIMULATED] Low credit alert for ${userId}: ${credits}`);
+
+  res.json({ success: true });
+});
+
+// Payment logging for admin analytics
+app.post('/api/payments/log', (req, res) => {
+  const { userId, credits, amount, currency = 'inr', status = 'success', planId = 'credits-pack' } = req.body;
+  if (!userId || !credits || !amount) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const all = readJsonArray(PAYMENTS_FILE);
+  const entry = {
+    id: Date.now().toString(),
+    userId,
+    credits,
+    amount,
+    currency,
+    status,
+    planId,
+    createdAt: new Date().toISOString()
+  };
+  all.push(entry);
+  writeJsonArray(PAYMENTS_FILE, all);
+  res.json({ success: true, entry });
+});
+
+// Flag AI responses for admin review
+app.post('/api/flags', (req, res) => {
+  const { userId, source, reason, contentSnippet } = req.body;
+  if (!userId || !source || !reason) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const all = readJsonArray(FLAGS_FILE);
+  const item = {
+    id: Date.now().toString(),
+    userId,
+    source,
+    reason,
+    contentSnippet: contentSnippet || '',
+    status: 'open',
+    createdAt: new Date().toISOString()
+  };
+  all.push(item);
+  writeJsonArray(FLAGS_FILE, all);
+  res.json({ success: true, item });
+});
+
+// Role-based admin dashboard summary
+app.get('/api/admin/dashboard/:adminUserId', (req, res) => {
+  const { adminUserId } = req.params;
+  if (!isAdminUser(adminUserId)) {
+    return res.status(403).json({ error: 'Forbidden: admin access required' });
+  }
+
+  const history = readHistory();
+  const payments = readJsonArray(PAYMENTS_FILE);
+  const flags = readJsonArray(FLAGS_FILE);
+  const notifications = readJsonArray(NOTIFICATIONS_FILE);
+  const uniqueUsers = new Set(history.map(h => h.userId));
+
+  res.json({
+    totals: {
+      users: uniqueUsers.size,
+      analyses: history.length,
+      payments: payments.length,
+      flaggedResponses: flags.length,
+      unreadNotifications: notifications.filter(n => !n.read).length
+    },
+    recentPayments: payments
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 20),
+    openFlags: flags
+      .filter(f => f.status !== 'closed')
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 20)
+  });
+});
+
 // Helper function to convert buffer to base64 for Gemini
 function fileToGenerativePart(buffer, mimeType) {
   return {
@@ -171,6 +451,89 @@ function fileToGenerativePart(buffer, mimeType) {
       mimeType,
     },
   };
+}
+
+function shouldUseGeminiFallback(error) {
+  const status = error?.status || error?.response?.status;
+  const message = String(error?.message || '').toLowerCase();
+
+  return (
+    status === 503 ||
+    message.includes('service unavailable') ||
+    message.includes('high demand')
+  );
+}
+
+async function generateContentWithFallback({ localGenAI, content, modelOptions = {}, endpointLabel }) {
+  try {
+    const primaryModel = localGenAI.getGenerativeModel({
+      model: PRIMARY_GEMINI_MODEL,
+      ...modelOptions
+    });
+
+    return await primaryModel.generateContent(content);
+  } catch (error) {
+    if (!shouldUseGeminiFallback(error)) {
+      throw error;
+    }
+
+    console.warn(`[${endpointLabel}] Primary model ${PRIMARY_GEMINI_MODEL} failed (${error?.status || 'unknown'}). Trying fallback models: ${GEMINI_FALLBACK_MODELS.join(', ')}.`);
+
+    let lastError = error;
+
+    for (const fallbackModelName of GEMINI_FALLBACK_MODELS) {
+      try {
+        const fallbackModel = localGenAI.getGenerativeModel({
+          model: fallbackModelName,
+          ...modelOptions
+        });
+
+        return await fallbackModel.generateContent(content);
+      } catch (fallbackError) {
+        lastError = fallbackError;
+        console.warn(`[${endpointLabel}] Fallback model ${fallbackModelName} failed (${fallbackError?.status || 'unknown'}).`);
+      }
+    }
+
+    throw lastError;
+  }
+}
+
+async function sendChatWithFallback({ localGenAI, history, message, modelOptions = {}, endpointLabel }) {
+  try {
+    const primaryModel = localGenAI.getGenerativeModel({
+      model: PRIMARY_GEMINI_MODEL,
+      ...modelOptions
+    });
+
+    const chat = primaryModel.startChat({ history });
+    return await chat.sendMessage(message);
+  } catch (error) {
+    if (!shouldUseGeminiFallback(error)) {
+      throw error;
+    }
+
+    console.warn(`[${endpointLabel}] Primary model ${PRIMARY_GEMINI_MODEL} failed (${error?.status || 'unknown'}). Trying fallback models: ${GEMINI_FALLBACK_MODELS.join(', ')}.`);
+
+    let lastError = error;
+
+    for (const fallbackModelName of GEMINI_FALLBACK_MODELS) {
+      try {
+        const fallbackModel = localGenAI.getGenerativeModel({
+          model: fallbackModelName,
+          ...modelOptions
+        });
+
+        const chat = fallbackModel.startChat({ history });
+        return await chat.sendMessage(message);
+      } catch (fallbackError) {
+        lastError = fallbackError;
+        console.warn(`[${endpointLabel}] Fallback model ${fallbackModelName} failed (${fallbackError?.status || 'unknown'}).`);
+      }
+    }
+
+    throw lastError;
+  }
 }
 
 // POST Analyze Hair with Gemini
@@ -184,11 +547,6 @@ app.post('/api/analyze-hair', upload.single('image'), async (req, res) => {
     const currentKey = process.env.GEMINI_API_KEY;
     console.log("Analyze Request using Key ending in:", currentKey ? currentKey.slice(-5) : "undefined");
     const localGenAI = new GoogleGenerativeAI(currentKey);
-
-    const model = localGenAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: { responseMimeType: "application/json" }
-    });
 
     const prompt = `Analyze this hair image as a trichologist. Return a JSON object with this structure:
     {
@@ -207,7 +565,12 @@ app.post('/api/analyze-hair', upload.single('image'), async (req, res) => {
 
     const imagePart = fileToGenerativePart(req.file.buffer, req.file.mimetype);
 
-    const result = await model.generateContent([prompt, imagePart]);
+    const result = await generateContentWithFallback({
+      localGenAI,
+      content: [prompt, imagePart],
+      modelOptions: { generationConfig: { responseMimeType: "application/json" } },
+      endpointLabel: 'analyze-hair'
+    });
     const response = await result.response;
     const text = response.text();
 
@@ -245,11 +608,6 @@ app.post('/api/chat', async (req, res) => {
 
     const currentKey = process.env.GEMINI_API_KEY;
     const localGenAI = new GoogleGenerativeAI(currentKey);
-    const model = localGenAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction: "You are an expert trichologist and hair care consultant. IMPORTANT: Your sole purpose is to answer questions related to hair care, scalp health, hair products, and hairstyling. If the user asks a question that is NOT related to hair or these topics, you must gracefully decline to answer and simply state: 'I can only help with hair-related topics.' Do not provide any other assistance for non-hair queries."
-    });
-
     let formattedHistory = history ? history.map(msg => ({
       role: msg.sender === 'user' ? 'user' : 'model',
       parts: [{ text: msg.text }]
@@ -260,11 +618,15 @@ app.post('/api/chat', async (req, res) => {
       formattedHistory.shift();
     }
 
-    const chat = model.startChat({
+    const result = await sendChatWithFallback({
+      localGenAI,
       history: formattedHistory,
+      message,
+      modelOptions: {
+        systemInstruction: "You are an expert trichologist and hair care consultant. IMPORTANT: Your sole purpose is to answer questions related to hair care, scalp health, hair products, and hairstyling. If the user asks a question that is NOT related to hair or these topics, you must gracefully decline to answer and simply state: 'I can only help with hair-related topics.' Do not provide any other assistance for non-hair queries."
+      },
+      endpointLabel: 'chat'
     });
-
-    const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
 
@@ -285,11 +647,6 @@ app.post('/api/analyze-face', upload.single('image'), async (req, res) => {
 
     const currentKey = process.env.GEMINI_API_KEY;
     const localGenAI = new GoogleGenerativeAI(currentKey);
-    const model = localGenAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: { responseMimeType: "application/json" }
-    });
-
     const prompt = `Analyze this face image. Return a JSON object with this structure:
     {
       "faceShape": "Short string of the dominant face shape e.g. 'Oval', 'Round', 'Square', 'Heart', 'Diamond', 'Oblong'",
@@ -301,7 +658,12 @@ app.post('/api/analyze-face', upload.single('image'), async (req, res) => {
 
     const imagePart = fileToGenerativePart(req.file.buffer, req.file.mimetype);
 
-    const result = await model.generateContent([prompt, imagePart]);
+    const result = await generateContentWithFallback({
+      localGenAI,
+      content: [prompt, imagePart],
+      modelOptions: { generationConfig: { responseMimeType: "application/json" } },
+      endpointLabel: 'analyze-face'
+    });
     const response = await result.response;
     const text = response.text();
 
@@ -323,11 +685,6 @@ app.post('/api/analyze-risk', async (req, res) => {
 
     const currentKey = process.env.GEMINI_API_KEY;
     const localGenAI = new GoogleGenerativeAI(currentKey);
-    const model = localGenAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: { responseMimeType: "application/json" }
-    });
-
     const prompt = `Analyze the following user survey answers about their hair loss risk factors:
     ${JSON.stringify(answers)}
     
@@ -341,7 +698,12 @@ app.post('/api/analyze-risk', async (req, res) => {
     }
     IMPORTANT: Return ONLY the raw JSON string. Do not wrap it in markdown code blocks.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await generateContentWithFallback({
+      localGenAI,
+      content: prompt,
+      modelOptions: { generationConfig: { responseMimeType: "application/json" } },
+      endpointLabel: 'analyze-risk'
+    });
     const response = await result.response;
     const text = response.text();
 

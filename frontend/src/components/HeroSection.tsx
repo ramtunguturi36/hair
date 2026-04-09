@@ -43,24 +43,23 @@ const HeroSection: React.FC = () => {
         <section className={styles.section}>
             <div className={styles.textContainer}>
                 <h2 className={styles.title}>
-                    We <span className="text-green-500">Focus</span>  On <br /> Fixing Your Hair
+                    Healthy Hair, <span className="text-cyan-600">Mapped</span> by AI <br /> and Built for You
                 </h2>
                 <p className={styles.description}>
-                Improving your hair so you can get the best results for your hair. 
-                Also, you get the results quickly.
+                Scan your hair, get expert-grade analysis, and follow a routine that adapts to your goals, concerns, and budget.
                 </p>
                 <button className={styles.getStartedButton} onClick={handleGetStarted}>
-                    Get Started
+                    Start Your Analysis
                 </button>
             </div>
             <div className = {styles.canvasContainer}>
                 <div className={styles.gradientCircle}>
                 </div>
                 <Canvas>
-                    <ambientLight intensity={1} />
-                    <directionalLight position={[10, 10, 5]} intensity={0.5} />
+                    <ambientLight intensity={0.95} />
+                    <directionalLight position={[10, 10, 5]} intensity={0.6} />
                     <BlowDryer />
-                    <OrbitControls />
+                    <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.8} enablePan={false} maxPolarAngle={1.8} minPolarAngle={1.2} />
                 </Canvas>
             </div>
 

@@ -3,31 +3,31 @@
         {
             "name": "L'Oreal Hyaluron Moisture Shampoo",
             "brand": "L'Oreal Paris",
-            "image": "https://m.media-amazon.com/images/I/51+6q+P+VJL._SL1000_.jpg",
+            "image": "/shampoos/Images/L'Oreal Hyaluron Moisture Shampoo.JPEG",
             "link": "https://www.amazon.in/s?k=L%27Oreal+Paris+Hyaluron+Moisture+Shampoo"
         },
         {
             "name": "Biolage Smoothproof Conditioner",
             "brand": "Matrix",
-            "image": "https://m.media-amazon.com/images/I/51pK-jW-cIL._SL1000_.jpg",
+            "image": "/shampoos/Images/Biolage Smoothproof Conditioner.jpg",
             "link": "https://www.amazon.in/s?k=Biolage+Smoothproof+Conditioner"
         },
         {
             "name": "Tresemme Keratin Smooth Serum",
             "brand": "Tresemme",
-            "image": "https://m.media-amazon.com/images/I/61jz2g1g0PL._SL1500_.jpg",
+            "image": "/shampoos/Images/Tresemme Keratin Smooth Serum.jpg",
             "link": "https://www.amazon.in/s?k=Tresemme+Keratin+Smooth+Serum"
         },
         {
             "name": "Maui Moisture Lightweight Hydration Shampoo",
             "brand": "Maui Moisture",
-            "image": "https://m.media-amazon.com/images/I/71j3x6o5AqL._SL1500_.jpg",
+            "image": "/shampoos/Images/Maui Moisture Lightweight Hydration Shampoo.jpg",
             "link": "https://www.amazon.in/s?k=Maui+Moisture+Lightweight+Hydration+Shampoo"
         },
         {
             "name": "OGX Coconut Milk Conditioner",
             "brand": "OGX",
-            "image": "https://m.media-amazon.com/images/I/71Qf6f2mLUL._SL1500_.jpg",
+            "image": "/shampoos/Images/OGX Coconut Milk Conditioner.jpg",
             "link": "https://www.amazon.in/s?k=OGX+Coconut+Milk+Conditioner"
         }
     ],
@@ -35,31 +35,31 @@
         {
             "name": "Kevin Murphy Killer Waves",
             "brand": "Kevin Murphy",
-            "image": "https://m.media-amazon.com/images/I/61j1-C-O0EL._SL1500_.jpg",
+            "image": "/shampoos/Images/Kevin Murphy Killer Waves.jpg",
             "link": "https://www.amazon.in/s?k=Kevin+Murphy+Killer+Waves"
         },
         {
             "name": "Livon Shake & Spray Serum",
             "brand": "Livon",
-            "image": "https://m.media-amazon.com/images/I/41K-m8o8iSL._SX300_SY300_QL70_FMwebp_.jpg",
+            "image": "/shampoos/Images/Livon Shake & Spray Serum.jpg",
             "link": "https://www.amazon.in/s?k=Livon+Shake+and+Spray+Serum"
         },
         {
             "name": "Not Your Mother's Beach Babe Texturizing Spray",
             "brand": "Not Your Mother's",
-            "image": "https://m.media-amazon.com/images/I/61kW0lHf3EL._SL1500_.jpg",
+            "image": "/shampoos/Images/Not Your Mother's Beach Babe Texturizing Spray.jpg",
             "link": "https://www.amazon.in/s?k=Not+Your+Mother%27s+Beach+Babe+Texturizing+Spray"
         },
         {
             "name": "BBlunt Curly Hair Mask",
             "brand": "BBlunt",
-            "image": "https://m.media-amazon.com/images/I/61fB8I6q8qL._SL1500_.jpg",
+            "image": "/shampoos/Images/BBlunt Curly Hair Mask.jpg",
             "link": "https://www.amazon.in/s?k=BBlunt+Curly+Hair+Mask"
         },
         {
             "name": "Moroccanoil Curl Defining Cream",
             "brand": "Moroccanoil",
-            "image": "https://m.media-amazon.com/images/I/61C9Q2KkA0L._SL1500_.jpg",
+            "image": "/shampoos/Images/Moroccanoil Curl Defining Cream.jpg",
             "link": "https://www.amazon.in/s?k=Moroccanoil+Curl+Defining+Cream"
         }
     ],
@@ -67,31 +67,31 @@
         {
             "name": "Advanced Curl Care Hair Cream",
             "brand": "Arata",
-            "image": "https://m.media-amazon.com/images/I/61RCNt+j+oL._SL1080_.jpg",
+            "image": "/shampoos/Images/Advanced Curl Care Hair Cream.jpg",
             "link": "https://www.amazon.in/s?k=Arata+Advanced+Curl+Care+Hair+Cream"
         },
         {
             "name": "Fix My Curls Leave-in Cream",
             "brand": "Fix My Curls",
-            "image": "https://m.media-amazon.com/images/I/51A3I4qN+JL._SL1000_.jpg",
+            "image": "/shampoos/Images/Fix My Curls Leave-in Cream.jpg",
             "link": "https://www.amazon.in/s?k=Fix+My+Curls+Leave-in+Cream"
         },
         {
             "name": "SheaMoisture Curl Enhancing Smoothie",
             "brand": "SheaMoisture",
-            "image": "https://m.media-amazon.com/images/I/71D9D4f8jXL._SL1500_.jpg",
+            "image": "/shampoos/Images/SheaMoisture Curl Enhancing Smoothie.jpg",
             "link": "https://www.amazon.in/s?k=SheaMoisture+Curl+Enhancing+Smoothie"
         },
         {
             "name": "Cantu Leave-In Conditioning Repair Cream",
             "brand": "Cantu",
-            "image": "https://m.media-amazon.com/images/I/71R8Fx4A2uL._SL1500_.jpg",
+            "image": "/shampoos/Images/Cantu Leave-In Conditioning Repair Cream.jpg",
             "link": "https://www.amazon.in/s?k=Cantu+Leave+In+Conditioning+Repair+Cream"
         },
         {
             "name": "Aunt Jackie's Curl La La Defining Custard",
             "brand": "Aunt Jackie's",
-            "image": "https://m.media-amazon.com/images/I/71v6pD5sJjL._SL1500_.jpg",
+            "image": "/shampoos/Images/Aunt Jackie's Curl La La Defining Custard.jpg",
             "link": "https://www.amazon.in/s?k=Aunt+Jackie%27s+Curl+La+La+Defining+Custard"
         }
     ],
@@ -99,31 +99,31 @@
         {
             "name": "Shea Butter & Coconut Curling Cream",
             "brand": "Cantu",
-            "image": "https://m.media-amazon.com/images/I/71u+2e+g+pL._SL1500_.jpg",
+            "image": "/shampoos/Images/Shea Butter & Coconut Curling Cream.jpg",
             "link": "https://www.amazon.in/s?k=Cantu+Shea+Butter+Coconut+Curling+Cream"
         },
         {
             "name": "Jamaica Black Castor Oil Masque",
             "brand": "Shea Moisture",
-            "image": "https://m.media-amazon.com/images/I/81I-1a+iW+L._SL1500_.jpg",
+            "image": "/shampoos/Images/Jamaica Black Castor Oil Masque.jpg",
             "link": "https://www.amazon.in/s?k=Shea+Moisture+Jamaican+Black+Castor+Oil+Masque"
         },
         {
             "name": "Mielle Organics Pomegranate & Honey Leave-In",
             "brand": "Mielle Organics",
-            "image": "https://m.media-amazon.com/images/I/71x5JQx6h9L._SL1500_.jpg",
+            "image": "/shampoos/Images/Mielle Organics Pomegranate & Honey Leave-In.jpg",
             "link": "https://www.amazon.in/s?k=Mielle+Organics+Pomegranate+and+Honey+Leave+In"
         },
         {
             "name": "As I Am DoubleButter Cream",
             "brand": "As I Am",
-            "image": "https://m.media-amazon.com/images/I/71B9a0w4vLL._SL1500_.jpg",
+            "image": "/shampoos/Images/As I Am DoubleButter Cream.jpg",
             "link": "https://www.amazon.in/s?k=As+I+Am+DoubleButter+Cream"
         },
         {
             "name": "Camille Rose Algae Renew Deep Conditioner",
             "brand": "Camille Rose",
-            "image": "https://m.media-amazon.com/images/I/71u2Xk8yYlL._SL1500_.jpg",
+            "image": "/shampoos/Images/Camille Rose Algae Renew Deep Conditioner.jpg",
             "link": "https://www.amazon.in/s?k=Camille+Rose+Algae+Renew+Deep+Conditioner"
         }
     ]

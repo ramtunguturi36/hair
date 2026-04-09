@@ -1,0 +1,25 @@
+[
+  {
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "concerns": [
+      "oiliness",
+      "dryness"
+    ],
+    "budgetRange": "mid",
+    "allergies": [
+      "fragrance",
+      "coconutoil"
+    ],
+    "goals": [
+      "reduce shedding",
+      "grow length"
+    ],
+    "reminderTime": "20:00",
+    "reminderDays": [
+      "Mon",
+      "Wed",
+      "Sat"
+    ],
+    "updatedAt": "2026-04-08T05:25:26.630Z"
+  }
+]

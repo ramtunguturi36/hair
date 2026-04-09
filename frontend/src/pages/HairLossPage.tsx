@@ -98,10 +98,10 @@ const HairLossPage: React.FC = () => {
     const ResultIcon = result.icon;
 
     return (
-        <div className="p-8 max-w-4xl mx-auto min-h-[80vh] flex flex-col items-center justify-center">
+        <div className="dash-page max-w-4xl min-h-[80vh] flex flex-col items-center justify-center">
 
             {!showResult ? (
-                <div className="w-full max-w-2xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-10 animate-fade-in-up">
+            <div className="w-full max-w-2xl dash-card-strong p-10 animate-fade-in-up">
                     <div className="mb-8">
                         <div className="flex justify-between text-sm font-medium text-gray-400 mb-2">
                             <span>Question {step} of {questions.length}</span>
@@ -109,13 +109,13 @@ const HairLossPage: React.FC = () => {
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-2">
                             <div
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                                className="bg-gradient-to-r from-cyan-600 to-blue-600 h-2 rounded-full transition-all duration-500"
                                 style={{ width: `${(step / questions.length) * 100}%` }}
                             ></div>
                         </div>
                     </div>
 
-                    <h2 className="text-3xl font-extrabold text-gray-800 mb-8 leading-tight">
+                    <h2 className="dash-card-title text-3xl mb-8 leading-tight">
                         {questions[step - 1].question}
                     </h2>
 
@@ -124,16 +124,16 @@ const HairLossPage: React.FC = () => {
                             <button
                                 key={idx}
                                 onClick={() => handleAnswer(option.label, option.value)}
-                                className="w-full text-left p-6 rounded-2xl border border-gray-100 hover:border-purple-200 bg-white hover:bg-purple-50 transition-all duration-300 flex items-center justify-between group shadow-sm hover:shadow-md"
+                                className="w-full text-left p-6 rounded-2xl border border-slate-200 hover:border-cyan-200 bg-white hover:bg-cyan-50 transition-all duration-300 flex items-center justify-between group shadow-sm"
                             >
-                                <span className="text-lg font-medium text-gray-700 group-hover:text-purple-700">{option.label}</span>
-                                <FaChevronRight className="text-gray-300 group-hover:text-purple-500 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
+                                <span className="text-lg font-medium text-gray-700 group-hover:text-cyan-700">{option.label}</span>
+                                <FaChevronRight className="text-gray-300 group-hover:text-cyan-600 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
                             </button>
                         ))}
                     </div>
                 </div>
             ) : (
-                <div className="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-12 text-center animate-fade-in-up">
+                <div className="w-full max-w-3xl dash-card-strong p-12 text-center animate-fade-in-up">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-10">
                             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500 mb-4"></div>
@@ -145,7 +145,7 @@ const HairLossPage: React.FC = () => {
                                 <ResultIcon className={`text-5xl ${result.color}`} />
                             </div>
 
-                            <h2 className="text-4xl font-extrabold text-gray-800 mb-2">Your Risk Level: <span className={result.color}>{result.level}</span></h2>
+                            <h2 className="dash-title text-4xl mb-2">Your Risk Level: <span className={result.color}>{result.level}</span></h2>
                             <div className="w-64 h-4 bg-gray-200 rounded-full mx-auto my-6 overflow-hidden relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 opacity-30"></div>
                                 <div
@@ -159,9 +159,9 @@ const HairLossPage: React.FC = () => {
                             </p>
 
                             {aiResult && aiResult.actionableAdvice && (
-                                <div className="text-left bg-purple-50 p-6 rounded-2xl mb-10 border border-purple-100 shadow-sm inline-block w-full max-w-xl">
-                                    <h3 className="font-bold text-lg mb-3 text-purple-900 border-b border-purple-200 pb-2">Actionable AI Advice</h3>
-                                    <ul className="list-disc pl-5 space-y-2 text-purple-800">
+                                <div className="text-left bg-cyan-50 p-6 rounded-2xl mb-10 border border-cyan-100 shadow-sm inline-block w-full max-w-xl">
+                                    <h3 className="dash-card-title text-lg mb-3 text-cyan-900 border-b border-cyan-200 pb-2">Actionable AI Advice</h3>
+                                    <ul className="list-disc pl-5 space-y-2 text-cyan-800">
                                         {aiResult.actionableAdvice.map((advice: string, idx: number) => (
                                             <li key={idx} className="text-md">{advice}</li>
                                         ))}
@@ -171,7 +171,7 @@ const HairLossPage: React.FC = () => {
 
                             <button
                                 onClick={() => { setStep(1); setScore(0); setUserAnswers([]); setAiResult(null); setShowResult(false); }}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all w-full md:w-auto"
+                                className="dash-btn-primary w-full md:w-auto px-8 py-4"
                             >
                                 Retake Assessment
                             </button>

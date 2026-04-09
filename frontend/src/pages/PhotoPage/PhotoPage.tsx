@@ -87,7 +87,7 @@ const PhotoPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 flex flex-col items-center justify-center">
+    <div className="dash-page min-h-[calc(100vh-110px)] flex flex-col justify-start">
       {isCameraView ? (
         <CameraCapturePage
           setImageSrc={setImageSrc}

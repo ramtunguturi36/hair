@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { api, API_BASE } from '../utils/api';
 
 interface Message {
     id: string;
@@ -61,7 +62,7 @@ const ConsultationPage: React.FC = () => {
 
         // Send message to backend
         try {
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch(`${API_BASE}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -105,17 +106,31 @@ const ConsultationPage: React.FC = () => {
         }
     };
 
+    const flagMessage = async (msg: Message) => {
+        if (!user || msg.sender !== 'ai') return;
+        try {
+            await api.post('/api/flags', {
+                userId: user.id,
+                source: 'chat',
+                reason: 'Potentially inaccurate or unsafe answer',
+                contentSnippet: msg.text.slice(0, 400)
+            });
+        } catch (error) {
+            console.error('Failed to flag message:', error);
+        }
+    };
+
     return (
-        <div className="h-[calc(100vh-100px)] flex flex-col max-w-4xl mx-auto p-4">
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 flex flex-col h-full overflow-hidden">
+        <div className="dash-page h-[calc(100vh-120px)] max-w-5xl">
+            <div className="dash-card-strong flex flex-col h-full overflow-hidden">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white flex items-center shadow-md z-10">
+                <div className="bg-gradient-to-r from-cyan-700 to-blue-700 p-6 text-white flex items-center shadow-sm z-10 rounded-2xl">
                     <div className="bg-white/20 p-3 rounded-full mr-4 backdrop-blur-sm">
                         <FaRobot className="text-2xl text-white" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold">AI Hair Consultant</h2>
-                        <p className="text-purple-100 text-sm flex items-center">
+                        <h2 className="dash-card-title text-2xl text-white">AI Hair Consultant</h2>
+                        <p className="text-cyan-100 text-sm flex items-center">
                             <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
                             Online & Ready to Help
                         </p>
@@ -123,7 +138,7 @@ const ConsultationPage: React.FC = () => {
                 </div>
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/70 rounded-xl mt-4">
                     {messages.map((msg) => (
                         <div
                             key={msg.id}
@@ -138,10 +153,18 @@ const ConsultationPage: React.FC = () => {
                                 </div>
 
                                 <div className={`px-5 py-3 rounded-2xl shadow-sm ${msg.sender === 'user'
-                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-br-none'
+                                    ? 'bg-gradient-to-r from-cyan-700 to-blue-700 text-white rounded-br-none'
                                     : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none'
                                     }`}>
                                     <MarkdownRenderer content={msg.text} isUser={msg.sender === 'user'} />
+                                    {msg.sender === 'ai' && (
+                                        <button
+                                            onClick={() => flagMessage(msg)}
+                                            className="text-[11px] mt-2 text-red-600 hover:text-red-800 font-semibold"
+                                        >
+                                            Flag response
+                                        </button>
+                                    )}
                                     <span className={`text-[10px] block mt-1 opacity-70 ${msg.sender === 'user' ? 'text-indigo-100 text-right' : 'text-gray-400'
                                         }`}>
                                         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -169,19 +192,19 @@ const ConsultationPage: React.FC = () => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 bg-white border-t border-gray-100">
+                <div className="p-4 bg-white/95 border-t border-slate-200 rounded-b-2xl">
                     <form onSubmit={handleSendMessage} className="flex gap-2 relative">
                         <input
                             type="text"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder="Ask me anything about your hair..."
-                            className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 px-6 py-4 rounded-xl border-none focus:ring-2 focus:ring-purple-100 focus:bg-white transition-all shadow-inner"
+                            className="flex-1 bg-slate-50 text-gray-800 placeholder-gray-400 px-6 py-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-100 focus:bg-white transition-all"
                         />
                         <button
                             type="submit"
                             disabled={!inputText.trim()}
-                            className="bg-gray-900 text-white p-4 rounded-xl hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-95"
+                            className="bg-slate-900 text-white p-4 rounded-xl hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm active:scale-95"
                         >
                             <FaPaperPlane />
                         </button>

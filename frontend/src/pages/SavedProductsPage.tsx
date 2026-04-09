@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { FaShoppingBag, FaHeart, FaTrash } from 'react-icons/fa';
+import { FaShoppingBag, FaHeart, FaTrash, FaImage } from 'react-icons/fa';
 
 interface Product {
     name: string;
@@ -13,6 +13,7 @@ const SavedProductsPage: React.FC = () => {
     const { user } = useUser();
     const [savedProducts, setSavedProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (user) {
@@ -44,6 +45,10 @@ const SavedProductsPage: React.FC = () => {
         }
     };
 
+    const markImageFailed = (productName: string) => {
+        setFailedImages(prev => ({ ...prev, [productName]: true }));
+    };
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -54,19 +59,19 @@ const SavedProductsPage: React.FC = () => {
     }
 
     return (
-        <div className="p-8 max-w-6xl mx-auto">
+        <div className="dash-page">
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
-                <h2 className="text-4xl font-extrabold text-gray-800 flex items-center">
+                <h2 className="dash-title flex items-center">
                     <FaHeart className="text-purple-600 mr-4" />
                     Saved Products
                 </h2>
-                <span className="bg-purple-100 text-purple-800 py-1 px-4 rounded-full font-bold text-sm">
+                <span className="dash-chip">
                     {savedProducts.length} Items
                 </span>
             </div>
 
             {savedProducts.length === 0 ? (
-                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-16 text-center border border-gray-100 animate-fade-in-up">
+                <div className="dash-card-strong p-16 text-center animate-fade-in-up">
                     <div className="bg-purple-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
                         <FaShoppingBag className="text-5xl text-purple-300" />
                     </div>
@@ -80,14 +85,22 @@ const SavedProductsPage: React.FC = () => {
                     {savedProducts.map((product, index) => (
                         <div
                             key={index}
-                            className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
+                            className="group bg-white/92 rounded-2xl border border-slate-200/70 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col"
                         >
                             <div className="relative h-48 w-full bg-gray-50 overflow-hidden">
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                                />
+                                {failedImages[product.name] ? (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-500">
+                                        <FaImage className="text-2xl mb-2" />
+                                        <span className="text-xs font-semibold px-3 text-center">Image unavailable</span>
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                                        onError={() => markImageFailed(product.name)}
+                                    />
+                                )}
                                 <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-gray-700 shadow-sm">
                                     {product.brand}
                                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import catalog from '../data/productCatalog.json';
-import { FaShoppingBag, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaShoppingBag, FaHeart, FaRegHeart, FaImage } from 'react-icons/fa';
 import { useUser } from '@clerk/clerk-react';
 
 interface Product {
@@ -17,6 +17,7 @@ interface ProductRecommendationsProps {
 const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairType }) => {
     const { user } = useUser();
     const [savedProducts, setSavedProducts] = useState<Product[]>([]);
+    const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (user) {
@@ -35,6 +36,10 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairTyp
     };
 
     const isSaved = (productName: string) => savedProducts.some(p => p.name === productName);
+
+    const markImageFailed = (productName: string) => {
+        setFailedImages(prev => ({ ...prev, [productName]: true }));
+    };
 
     const toggleSave = async (product: Product) => {
         if (!user) return;
@@ -87,11 +92,19 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairTyp
                         className="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
                     >
                         <div className="relative h-48 w-full bg-gray-50 overflow-hidden">
-                            <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-                            />
+                            {failedImages[product.name] ? (
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-500">
+                                    <FaImage className="text-2xl mb-2" />
+                                    <span className="text-xs font-semibold px-3 text-center">Image unavailable</span>
+                                </div>
+                            ) : (
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                                    onError={() => markImageFailed(product.name)}
+                                />
+                            )}
                             <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-gray-700 shadow-sm">
                                 {product.brand}
                             </div>

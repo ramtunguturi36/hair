@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { FaCheckCircle, FaArrowLeft, FaTimesCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
@@ -10,6 +10,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const PricingPage: React.FC = () => {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const navigate = useNavigate();
   const { credits } = useCredits();
   const [searchParams] = useSearchParams();
@@ -91,6 +92,7 @@ const PricingPage: React.FC = () => {
         planAmount: plan.amount,
         planCurrency: 'inr',
         credits: plan.credits,
+        userId: user?.id,
       });
 
       if (response.data && response.data.url) {
@@ -106,11 +108,11 @@ const PricingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="dash-page">
       <div className="max-w-7xl mx-auto">
         {/* Payment Status Notifications */}
         {paymentStatus === 'cancelled' && (
-          <div className="mb-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg flex items-center">
+          <div className="mb-6 dash-card border-l-4 border-yellow-500 text-yellow-700 flex items-center">
             <FaTimesCircle className="text-2xl mr-3" />
             <div>
               <p className="font-bold">Payment Cancelled</p>
@@ -120,23 +122,23 @@ const PricingPage: React.FC = () => {
         )}
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="dash-section-gap">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+            className="dash-btn-secondary mb-4"
           >
             <FaArrowLeft className="mr-2" />
             Back
           </button>
 
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <h1 className="dash-title mb-2">
               Buy Analysis Credits
             </h1>
-            <p className="text-lg text-gray-600 mb-4">
+            <p className="dash-subtitle text-lg mb-4">
               Get AI-powered hair analysis and personalized recommendations
             </p>
-            <div className="inline-block bg-white/50 backdrop-blur-sm border border-green-200 rounded-2xl px-8 py-4 shadow-sm">
+            <div className="inline-block dash-card px-8 py-4">
               <p className="text-green-800 font-bold flex items-center gap-3">
                 <span className="text-sm uppercase tracking-wider text-green-600">Current Balance</span>
                 <span className="text-3xl">{credits}</span>
@@ -147,25 +149,25 @@ const PricingPage: React.FC = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 dash-section-gap">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl shadow-xl p-8 text-center transform transition-all hover:scale-105 ${plan.popular
-                  ? 'border-4 border-green-500 bg-white'
-                  : 'border-2 border-gray-200 bg-white'
+                className={`relative rounded-2xl p-8 text-center transform transition-all hover:scale-[1.015] ${plan.popular
+                  ? 'dash-card-strong border-2 border-cyan-400'
+                  : 'dash-card border border-slate-200/80'
                 }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-green-500 text-white text-sm font-bold px-4 py-1 rounded-full shadow-lg">
+                  <span className="bg-cyan-600 text-white text-sm font-bold px-4 py-1 rounded-full shadow-sm">
                     🔥 MOST POPULAR
                   </span>
                 </div>
               )}
 
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="dash-card-title mb-2">
                   {plan.name}
                 </h3>
                 <p className="text-gray-600 text-sm">{plan.description}</p>
@@ -197,9 +199,9 @@ const PricingPage: React.FC = () => {
               </ul>
 
               <button
-                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-1 ${plan.popular
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-xl shadow-green-200'
-                    : 'bg-gray-900 hover:bg-black text-white shadow-lg'
+                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-0.5 ${plan.popular
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white shadow-md'
+                    : 'bg-slate-900 hover:bg-slate-800 text-white shadow-sm'
                   }`}
                 onClick={() => handleCheckout(plan)}
               >
@@ -210,11 +212,11 @@ const PricingPage: React.FC = () => {
         </div>
 
         {/* Info Section */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center max-w-3xl mx-auto">
-          <h3 className="text-xl font-bold text-blue-900 mb-2">
+        <div className="dash-card max-w-3xl mx-auto text-center">
+          <h3 className="dash-card-title mb-2 text-cyan-900">
             💡 How Credits Work
           </h3>
-          <p className="text-blue-800">
+          <p className="text-cyan-800">
             Each hair analysis costs <strong>25 credits</strong>. Credits never expire and can be used anytime.
             Purchase the package that best fits your needs – no subscriptions, no hidden fees!
           </p>

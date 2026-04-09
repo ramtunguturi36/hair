@@ -4,7 +4,14 @@ export interface DailyRoutine {
   products: string[];
 }
 
-export const generateHairRoutine = (hairType: string): DailyRoutine[] => {
+interface RoutinePreferences {
+  concerns?: string[];
+  goals?: string[];
+  allergies?: string[];
+  budgetRange?: 'low' | 'mid' | 'high';
+}
+
+export const generateHairRoutine = (hairType: string, preferences?: RoutinePreferences): DailyRoutine[] => {
   // Simplified logic: Maps predicted class (e.g., "Type 4C") to a routine
   const routine: DailyRoutine[] = [
     { day: 'Monday', activity: 'Wash Day', products: ['Sulfate-free Shampoo', 'Deep Conditioner'] },
@@ -23,6 +30,27 @@ export const generateHairRoutine = (hairType: string): DailyRoutine[] => {
   } else if (hairType.includes('Coily') || hairType.includes('Type 4')) {
       routine[1].activity = 'LCO Method (Liquid, Cream, Oil)';
       routine[3].activity = 'Intense Moisture';
+  }
+
+  if (preferences?.concerns?.includes('dandruff')) {
+    routine[5].activity = 'Scalp Clarify + Massage';
+    routine[5].products = ['Anti-dandruff Scalp Serum'];
+  }
+
+  if (preferences?.goals?.includes('grow length')) {
+    routine[4].products = [...routine[4].products, 'Protective Style Gel'];
+  }
+
+  if (preferences?.allergies?.some(a => a.toLowerCase().includes('fragrance'))) {
+    routine.forEach(day => {
+      day.products = day.products.map(product => `${product} (Fragrance-Free Option)`);
+    });
+  }
+
+  if (preferences?.budgetRange === 'low') {
+    routine.forEach(day => {
+      day.products = day.products.slice(0, 1);
+    });
   }
 
   return routine;

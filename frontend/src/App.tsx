@@ -11,6 +11,9 @@ import ConsultationPage from './pages/ConsultationPage';
 import HairLossPage from './pages/HairLossPage';
 import StyleGuidePage from './pages/StyleGuidePage';
 import ProfilePage from './pages/ProfilePage';
+import ProgressPage from './pages/ProgressPage';
+import NotificationsPage from './pages/NotificationsPage';
+import AdminPage from './pages/AdminPage';
 
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -75,6 +78,9 @@ const App: React.FC = () => {
             <Route path="style-guide" element={<StyleGuidePage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="saved" element={<SavedProductsPage />} />
+            <Route path="progress" element={<ProgressPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="admin" element={<AdminPage />} />
           </Route>
         </Routes>
       </ErrorBoundary>

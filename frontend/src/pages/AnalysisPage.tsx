@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { prof, tube1, tube2, tube3, tube4, tube5 } from '../assets/index';
 import { useCredits } from '../context/CreditContext';
 import { useUser } from '@clerk/clerk-react';
+import { api } from '../utils/api';
 
 import styles from '../styles/AnalysisPageStyles'; // Import styles
 
@@ -55,6 +56,16 @@ const AnalysisPage: React.FC = () => {
         addCredits(amount)
           .then(() => {
             console.log(`[AnalysisPage useEffect] ✅ Successfully added ${amount} credits`);
+            return api.post('/api/payments/log', {
+              userId: user.id,
+              credits: amount,
+              amount: amount * 199,
+              currency: 'inr',
+              status: 'success',
+              planId: 'credits-topup'
+            });
+          })
+          .then(() => {
             // Force refresh credits from server
             console.log('[AnalysisPage useEffect] 🔄 Calling refreshCredits...');
             return refreshCredits();

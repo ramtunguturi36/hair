@@ -86,11 +86,11 @@ const PaymentPlansSection = () => {
   };
 
   return (
-    <section id="pricing" className="bg-gray-100 py-16 px-6">
-      <h3 className="text-3xl font-semibold text-center mb-4">
+    <section id="pricing" className="bg-transparent py-14 px-6 md:px-8">
+      <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 text-center mb-4 tracking-tight">
         Choose Your Hair Analysis Credits
       </h3>
-      <p className="text-center text-gray-500 mb-8">
+      <p className="text-center text-slate-600 mb-10 max-w-3xl mx-auto">
         Get AI-powered hair analysis and personalized recommendations.
         Purchase credits that fit your needs - no monthly commitments!
       </p>
@@ -99,25 +99,25 @@ const PaymentPlansSection = () => {
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`rounded-lg shadow-lg p-8 text-center border-2 ${plan.popular ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'}`}
+            className={`rounded-2xl shadow-sm p-8 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${plan.popular ? 'border-cyan-500 bg-cyan-50/60' : 'border-slate-200 bg-white'}`}
           >
             {plan.popular && (
-              <span className="text-sm font-semibold text-red-600 bg-red-200 rounded-full px-3 py-1 inline-block mb-3">
+              <span className="text-xs font-semibold text-cyan-800 bg-cyan-200 rounded-full px-3 py-1 inline-block mb-3 uppercase tracking-wide">
                 Most Popular
               </span>
             )}
-            <h4 className="font-bold text-lg text-gray-700 mb-2">{plan.name}</h4>
-            <p className="text-grey-500 text-sm mb-4">{plan.description}</p>
+            <h4 className="font-bold text-lg text-slate-800 mb-2">{plan.name}</h4>
+            <p className="text-slate-500 text-sm mb-4">{plan.description}</p>
             <div className="mb-6">
-              <p className="text-4xl font-bold text-gray-800">
+              <p className="text-4xl font-bold text-slate-900">
                 ₹{plan.amount / 100}
               </p>
-              <p className="text-lg font-semibold text-green-600 mt-2">
+              <p className="text-lg font-semibold text-emerald-600 mt-2">
                 {plan.credits} Credits
               </p>
             </div>
 
-            <ul className="text-left text-gray-700 mb-6 space-y-2">
+            <ul className="text-left text-slate-700 mb-6 space-y-2">
               {plan.features.map((feature, index) => (
                 <li key={index} className="flex items-center">
                   <FaCheckCircle className="text-green-500 mr-2" />
@@ -127,7 +127,7 @@ const PaymentPlansSection = () => {
             </ul>
 
             <button
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 font-semibold"
+              className="bg-slate-900 hover:bg-cyan-700 text-white px-6 py-3 rounded-xl transition duration-200 font-semibold"
               onClick={() => handleCheckout(plan)}
             >
               Buy Credits

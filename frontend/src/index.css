@@ -4,6 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --space-page-x: clamp(1rem, 2vw, 2rem);
+  --space-page-y: clamp(1rem, 2.4vw, 2.25rem);
+  --space-card: clamp(1rem, 1.8vw, 1.5rem);
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-medium: 0 14px 34px rgba(15, 23, 42, 0.1);
+  --border-soft: 1px solid rgba(148, 163, 184, 0.24);
+  --surface-0: rgba(255, 255, 255, 0.88);
+  --surface-1: rgba(255, 255, 255, 0.96);
+  --text-0: #0f172a;
+  --text-1: #334155;
+  --text-2: #64748b;
+  --brand-1: #0891b2;
+  --brand-2: #2563eb;
+}
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -50,6 +69,97 @@
   .card-hover {
     @apply transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-glow-purple hover:border-accent-purple/50;
   }
+
+  .dash-page {
+    padding: var(--space-page-y) var(--space-page-x);
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .dash-title {
+    @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+    color: var(--text-0);
+  }
+
+  .dash-subtitle {
+    @apply text-sm md:text-base;
+    color: var(--text-2);
+  }
+
+  .dash-section-gap {
+    @apply mb-8 md:mb-10;
+  }
+
+  .dash-card-title {
+    @apply text-xl md:text-2xl font-bold tracking-tight;
+    color: var(--text-0);
+  }
+
+  .dash-card-subtitle {
+    @apply text-sm md:text-base;
+    color: var(--text-1);
+  }
+
+  .dash-stat {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+    color: var(--text-0);
+  }
+
+  .dash-card {
+    background: var(--surface-0);
+    border: var(--border-soft);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+    padding: var(--space-card);
+  }
+
+  .dash-card-strong {
+    background: var(--surface-1);
+    border: var(--border-soft);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-medium);
+    padding: var(--space-card);
+  }
+
+  .dash-chip {
+    @apply inline-flex items-center gap-2 text-xs font-semibold;
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.7rem;
+    background: rgba(8, 145, 178, 0.1);
+    color: var(--brand-1);
+    border: 1px solid rgba(8, 145, 178, 0.2);
+  }
+
+  .dash-btn-primary {
+    @apply inline-flex items-center justify-center font-semibold text-white transition-all duration-200;
+    border-radius: 12px;
+    padding: 0.62rem 1rem;
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  }
+
+  .dash-btn-primary:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.05) brightness(1.02);
+  }
+
+  .dash-btn-secondary {
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200;
+    border-radius: 12px;
+    padding: 0.58rem 0.95rem;
+    color: var(--text-1);
+    background: rgba(255, 255, 255, 0.95);
+    border: var(--border-soft);
+  }
+
+  .dash-btn-secondary:hover {
+    background: rgba(241, 245, 249, 1);
+  }
+
+  .page-transition {
+    animation: page-fade-slide 360ms cubic-bezier(0.2, 0.85, 0.2, 1);
+    will-change: transform, opacity;
+  }
 }
 
 @layer utilities {
@@ -58,4 +168,15 @@
   }
 
   /* Removed default fadeInUp in favor of tailwind slide-up-fade */
+}
+
+@keyframes page-fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

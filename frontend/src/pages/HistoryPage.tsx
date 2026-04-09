@@ -51,16 +51,16 @@ const HistoryPage: React.FC = () => {
     if (loading) return <div className="p-8 text-center">Loading history...</div>;
 
     return (
-        <div className="p-8 max-w-5xl mx-auto">
-            <h2 className="text-4xl font-extrabold text-gray-800 mb-10 flex items-center">
+        <div className="dash-page">
+            <h2 className="dash-title mb-10 flex items-center">
                 <FaHistory className="mr-4 text-purple-600" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-blue-700">
                     Analysis History
                 </span>
             </h2>
 
             {history.length === 0 ? (
-                <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-12 text-center text-gray-500 border border-white/50">
+                <div className="dash-card-strong p-12 text-center text-gray-500">
                     <div className="bg-purple-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <FaHistory className="text-4xl text-purple-500" />
                     </div>
@@ -70,7 +70,7 @@ const HistoryPage: React.FC = () => {
             ) : (
                 <div className="grid gap-6">
                     {history.map((item) => (
-                        <div key={item.id} className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div key={item.id} className="group bg-white/92 rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden flex flex-col md:flex-row transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                             {item.image && (
                                 <div className="md:w-64 h-64 md:h-auto flex-shrink-0 bg-gray-100 relative overflow-hidden">
                                     <img
