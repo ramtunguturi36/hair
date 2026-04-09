@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSun, FaCloudRain, FaWind, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaSun, FaCloudRain, FaMapMarkerAlt } from 'react-icons/fa';
 
 interface WeatherData {
     city: string;

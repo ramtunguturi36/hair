@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useCredits } from '../../context/CreditContext';
 import { alibaba, amazon, jumia } from '../../assets/index';
 import styles from '../../styles/ImageUploaderStyles';
@@ -70,10 +69,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
     const { user } = useUser();
 
-    const navigate = useNavigate();
     const { credits, deductCredits } = useCredits();
     const [showModel, setShowModel] = useState(false);
-    const [selectedWebsite, setSelectedWebsite] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [analysisResult, setAnalysisResult] = useState<string | null>(null);
     const [localIsAnalyzing, setLocalIsAnalyzing] = useState(false);
@@ -196,30 +193,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         document.getElementById('fileInput')?.click();
     };
 
-    const handleBuyHairProducts = () => {
-        if (predictions && predictions.length > 0) {
-            const topPrediction = predictions.reduce((prev, current) =>
-                prev.probability > current.probability ? prev : current
-            );
-            const product = encodeURIComponent(topPrediction.className + 'hair products');
-            setSelectedWebsite(product);
-            setShowModel(true);
-        } else {
-            alert('No predictions available to search for products.')
-        }
-    };
-
     const handleWebsiteClick = (website: string) => {
         let url = '';
+        const product = 'hair care products';
         switch (website) {
             case 'Amazon':
-                url = `https://www.amazon.com/s?k=${selectedWebsite}`;
+                url = `https://www.amazon.com/s?k=${product}`;
                 break;
             case 'Alibaba':
-                url = `https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&SearchText=${selectedWebsite}`;
+                url = `https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&SearchText=${product}`;
                 break;
             case 'Jumia':
-                url = `https://www.jumia.com.ng/catalog/?g=${selectedWebsite}`;
+                url = `https://www.jumia.com.ng/catalog/?g=${product}`;
                 break;
             default:
                 return;

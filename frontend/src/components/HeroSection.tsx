@@ -4,6 +4,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+// @ts-ignore
 import girl from '../models/source/girl.glb';
 import textureImage from '../models/textures/textureImage.png'
 import styles from '../styles/HeroSectionStyles';
@@ -13,7 +14,7 @@ const BlowDryer: React.FC = () => {
     const texture = useTexture(textureImage);
     
     const modelRef = useRef<THREE.Object3D>();
-    scene.traverse((child) => {
+    scene.traverse((child: THREE.Object3D) => {
       if ((child as THREE.Mesh).isMesh) {
         (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ map: texture });
       }

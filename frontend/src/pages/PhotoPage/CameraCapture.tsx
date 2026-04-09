@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useCredits } from '../../context/CreditContext';
 import { styles } from '../../styles/CameraCaptureStyles';
 
@@ -9,7 +9,6 @@ const CameraCapturePage: React.FC<{
 }> = ({ setImageSrc, setIsCameraView, classifyImage }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const { deductCredits } = useCredits();
 
   const openCamera = async () => {
@@ -17,7 +16,6 @@ const CameraCapturePage: React.FC<{
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setIsCameraOpen(true);
       }
     } catch (error) {
       alert('Camera not accessible or permission denied.');

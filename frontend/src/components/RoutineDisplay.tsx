@@ -22,7 +22,6 @@ const RoutineDisplay: React.FC<RoutineDisplayProps> = ({ routine, hairType }) =>
                 {routine.map((day, index) => {
                     const isWashDay = day.activity.includes('Wash');
                     const isMaskDay = day.activity.includes('Mask');
-                    const isRestDay = !isWashDay && !isMaskDay;
 
                     return (
                         <div

@@ -16,7 +16,7 @@ const key = process.env.GEMINI_API_KEY;
 console.log("Server using Gemini API Key:", key ? key.substring(0, 10) + "..." : "undefined");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const PRIMARY_GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_FALLBACK_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.5-pro'];
 const ADMIN_USER_IDS = (process.env.ADMIN_USER_IDS || '')

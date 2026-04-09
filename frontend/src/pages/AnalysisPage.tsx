@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import { prof, tube1, tube2, tube3, tube4, tube5 } from '../assets/index';
+import { prof, tube1, tube2, tube4, tube5 } from '../assets/index';
 import { useCredits } from '../context/CreditContext';
 import { useUser } from '@clerk/clerk-react';
 import { api } from '../utils/api';
