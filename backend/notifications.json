@@ -17,7 +17,7 @@
     "message": "This is your scheduled routine reminder. Open Hair Analysis to follow today's plan.",
     "type": "routine-reminder",
     "channel": "email",
-    "read": false,
+    "read": true,
     "status": "sent-simulated",
     "createdAt": "2026-04-08T05:24:26.894Z"
   },
@@ -28,7 +28,7 @@
     "message": "Time for your hair care routine. Stay consistent for better results.",
     "type": "routine-reminder",
     "channel": "in-app",
-    "read": false,
+    "read": true,
     "status": "delivered",
     "createdAt": "2026-04-09T09:25:24.785Z"
   },
@@ -39,8 +39,30 @@
     "message": "This is your scheduled routine reminder. Open Hair Analysis to follow today's plan.",
     "type": "routine-reminder",
     "channel": "email",
-    "read": false,
+    "read": true,
     "status": "sent-simulated",
     "createdAt": "2026-04-09T09:25:24.798Z"
+  },
+  {
+    "id": "1776403036113",
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "title": "Routine Reminder",
+    "message": "Time for your hair care routine. Stay consistent for better results.",
+    "type": "routine-reminder",
+    "channel": "in-app",
+    "read": true,
+    "status": "delivered",
+    "createdAt": "2026-04-17T05:17:16.115Z"
+  },
+  {
+    "id": "1776403036132",
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "title": "Routine Reminder Email",
+    "message": "This is your scheduled routine reminder. Open Hair Analysis to follow today's plan.",
+    "type": "routine-reminder",
+    "channel": "email",
+    "read": true,
+    "status": "sent-simulated",
+    "createdAt": "2026-04-17T05:17:16.133Z"
   }
 ]

@@ -1,27 +1,5 @@
 [
   {
-    "id": "1771935142889",
-    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
-    "product": {
-      "name": "Biolage Smoothproof Conditioner",
-      "brand": "Matrix",
-      "image": "https://m.media-amazon.com/images/I/51pK-jW-cIL._SL1000_.jpg",
-      "link": "https://www.amazon.in/s?k=Biolage+Smoothproof+Conditioner"
-    },
-    "savedAt": "2026-02-24T12:12:22.889Z"
-  },
-  {
-    "id": "1772253691160",
-    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
-    "product": {
-      "name": "Kevin Murphy Killer Waves",
-      "brand": "Kevin Murphy",
-      "image": "https://m.media-amazon.com/images/I/61j1-C-O0EL._SL1500_.jpg",
-      "link": "https://www.amazon.in/s?k=Kevin+Murphy+Killer+Waves"
-    },
-    "savedAt": "2026-02-28T04:41:31.160Z"
-  },
-  {
     "id": "1775726693274",
     "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
     "product": {

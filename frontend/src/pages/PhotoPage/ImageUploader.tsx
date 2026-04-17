@@ -6,7 +6,7 @@ import UpgradeCard from '../UpgradeCard';
 import RoutineDisplay from '../../components/RoutineDisplay';
 import ProductRecommendations from '../../components/ProductRecommendations';
 import { generateHairRoutine } from '../../utils/hairRoutineGenerator';
-import { api } from '../../utils/api';
+import { api, API_BASE } from '../../utils/api';
 
 interface Prediction {
     className: string;
@@ -125,7 +125,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 formData.append('image', selectedFile);
 
                 // Call the backend API
-                const response = await fetch('http://localhost:5000/api/analyze-hair', {
+                const response = await fetch(`${API_BASE}/api/analyze-hair`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -152,7 +152,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     // Try saving history here using fetch
                     try {
                         if (user) {
-                            await fetch('http://localhost:5000/api/history', {
+                            await fetch(`${API_BASE}/api/history`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
@@ -174,7 +174,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
             } catch (error) {
                 console.error('Error analyzing hair:', error);
-                alert('An error occurred during analysis. Please try again.');
+                const message = error instanceof TypeError
+                    ? 'Cannot connect to the backend server. Please start backend on port 5000 (npm run start in backend folder).'
+                    : 'An error occurred during analysis. Please try again.';
+                alert(message);
             } finally {
                 setLocalIsAnalyzing(false);
             }
