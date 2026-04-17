@@ -6,7 +6,7 @@
     "message": "Time for your hair care routine. Stay consistent for better results.",
     "type": "routine-reminder",
     "channel": "in-app",
-    "read": false,
+    "read": true,
     "status": "delivered",
     "createdAt": "2026-04-08T05:24:26.862Z"
   },
@@ -20,5 +20,27 @@
     "read": false,
     "status": "sent-simulated",
     "createdAt": "2026-04-08T05:24:26.894Z"
+  },
+  {
+    "id": "1775726724783",
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "title": "Routine Reminder",
+    "message": "Time for your hair care routine. Stay consistent for better results.",
+    "type": "routine-reminder",
+    "channel": "in-app",
+    "read": false,
+    "status": "delivered",
+    "createdAt": "2026-04-09T09:25:24.785Z"
+  },
+  {
+    "id": "1775726724798",
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "title": "Routine Reminder Email",
+    "message": "This is your scheduled routine reminder. Open Hair Analysis to follow today's plan.",
+    "type": "routine-reminder",
+    "channel": "email",
+    "read": false,
+    "status": "sent-simulated",
+    "createdAt": "2026-04-09T09:25:24.798Z"
   }
 ]
