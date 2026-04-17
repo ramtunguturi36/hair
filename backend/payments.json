@@ -8,5 +8,15 @@
     "status": "success",
     "planId": "credits-topup",
     "createdAt": "2026-04-17T05:14:24.121Z"
+  },
+  {
+    "id": "1776404934429",
+    "userId": "user_2t8HDTfKknELQTZFW4w1Am28ia6",
+    "credits": 100,
+    "amount": 19900,
+    "currency": "inr",
+    "status": "success",
+    "planId": "credits-topup",
+    "createdAt": "2026-04-17T05:48:54.432Z"
   }
 ]
