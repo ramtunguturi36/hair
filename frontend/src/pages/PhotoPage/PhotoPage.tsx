@@ -4,6 +4,7 @@ import * as tmImage from '@teachablemachine/image'; // Import Teachable Machine
 import CameraCapturePage from './CameraCapture'; // Import the CameraCapturePage component
 import ImageUploader from './ImageUploader'; // Import the ImageUploader component
 import axios from 'axios'; // Import axios for making API requests
+import { API_BASE } from '../../utils/api';
 
 const PhotoPage: React.FC = () => {
   const [isCameraView, setIsCameraView] = useState(false);
@@ -61,7 +62,7 @@ const PhotoPage: React.FC = () => {
           // Send results to the backend (History API)
           try {
             if (user) {
-              await axios.post('http://localhost:5000/api/history', {
+              await axios.post(`${API_BASE}/api/history`, {
                 userId: user.id,
                 date: new Date().toISOString(),
                 result: predictionData[0].className, // Top result

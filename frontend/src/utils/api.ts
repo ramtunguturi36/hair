@@ -1,5 +1,20 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
+export async function parseJsonResponse<T>(response: Response): Promise<T> {
+  const text = await response.text();
+  const trimmedText = text.trim();
+
+  if (!trimmedText) {
+    throw new Error(`Empty response from server (status ${response.status})`);
+  }
+
+  try {
+    return JSON.parse(trimmedText) as T;
+  } catch {
+    throw new Error(trimmedText);
+  }
+}
+
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${url}`, {
     headers: {
@@ -14,7 +29,7 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     throw new Error(text || `Request failed: ${response.status}`);
   }
 
-  return response.json() as Promise<T>;
+  return parseJsonResponse<T>(response);
 }
 
 export const api = {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import axios from 'axios';
 import { FaHistory, FaCalendarAlt } from 'react-icons/fa';
+import { API_BASE } from '../utils/api';
 
 interface HistoryItem {
     id: string;
@@ -23,8 +24,7 @@ const HistoryPage: React.FC = () => {
 
     const fetchHistory = async () => {
         try {
-            // In a real deployed app, replace localhost with production URL
-            const response = await axios.get(`http://localhost:5000/api/history/${user?.id}`);
+            const response = await axios.get(`${API_BASE}/api/history/${user?.id}`);
             // Sort by date descending
             const sorted = response.data.sort((a: any, b: any) =>
                 new Date(b.date).getTime() - new Date(a.date).getTime()

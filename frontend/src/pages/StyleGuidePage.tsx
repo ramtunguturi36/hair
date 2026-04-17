@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaUserCircle, FaCheck, FaMagic, FaUpload } from 'react-icons/fa';
+import { API_BASE, parseJsonResponse } from '../utils/api';
 
 const faceShapes = [
     {
@@ -46,6 +47,13 @@ const faceShapes = [
     }
 ];
 
+interface FaceAnalysisResponse {
+    faceShape?: string;
+    description?: string;
+    recommendedStyles?: string[];
+    confidence?: number;
+}
+
 const StyleGuidePage: React.FC = () => {
     const [selectedShape, setSelectedShape] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -70,11 +78,11 @@ const StyleGuidePage: React.FC = () => {
             const formData = new FormData();
             formData.append('image', file);
 
-            const response = await fetch('http://localhost:5000/api/analyze-face', {
+            const response = await fetch(`${API_BASE}/api/analyze-face`, {
                 method: 'POST',
                 body: formData
             });
-            const data = await response.json();
+            const data = await parseJsonResponse<FaceAnalysisResponse>(response);
             setAiResult(data);
 
             // Try to match the shape to one of our pre-defined colors for UI flair

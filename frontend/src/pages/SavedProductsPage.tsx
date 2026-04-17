@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { FaShoppingBag, FaHeart, FaTrash, FaImage } from 'react-icons/fa';
+import { API_BASE } from '../utils/api';
 
 interface Product {
     name: string;
@@ -23,7 +24,7 @@ const SavedProductsPage: React.FC = () => {
 
     const fetchSavedProducts = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/saved-products/${user?.id}`);
+            const response = await fetch(`${API_BASE}/api/saved-products/${user?.id}`);
             const data = await response.json();
             setSavedProducts(data.map((item: any) => item.product));
             setIsLoading(false);
@@ -36,7 +37,7 @@ const SavedProductsPage: React.FC = () => {
     const removeProduct = async (product: Product) => {
         if (!user) return;
         try {
-            await fetch(`http://localhost:5000/api/saved-products/${user.id}/${encodeURIComponent(product.name)}`, {
+            await fetch(`${API_BASE}/api/saved-products/${user.id}/${encodeURIComponent(product.name)}`, {
                 method: 'DELETE'
             });
             setSavedProducts(prev => prev.filter(p => p.name !== product.name));

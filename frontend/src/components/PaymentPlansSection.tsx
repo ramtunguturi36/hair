@@ -4,6 +4,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
+import { API_BASE } from '../utils/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -67,7 +68,7 @@ const PaymentPlansSection = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/create-checkout-session', {
+      const response = await axios.post(`${API_BASE}/create-checkout-session`, {
         planId: plan.name,
         planAmount: plan.amount,
         planCurrency: 'inr',

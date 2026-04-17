@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaHeartbeat, FaExclamationTriangle, FaCheckCircle, FaChevronRight } from 'react-icons/fa';
+import { API_BASE, parseJsonResponse } from '../utils/api';
 
 const HairLossPage: React.FC = () => {
     const [step, setStep] = useState(1);
@@ -52,12 +53,12 @@ const HairLossPage: React.FC = () => {
         setIsLoading(true);
         setShowResult(true);
         try {
-            const response = await fetch('http://localhost:5000/api/analyze-risk', {
+            const response = await fetch(`${API_BASE}/api/analyze-risk`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ answers: answersToSubmit })
             });
-            const data = await response.json();
+            const data = await parseJsonResponse(response);
             setAiResult(data);
         } catch (error) {
             console.error('Failed to get ML risk analysis:', error);

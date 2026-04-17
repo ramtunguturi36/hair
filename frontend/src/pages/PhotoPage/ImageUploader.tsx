@@ -6,7 +6,7 @@ import UpgradeCard from '../UpgradeCard';
 import RoutineDisplay from '../../components/RoutineDisplay';
 import ProductRecommendations from '../../components/ProductRecommendations';
 import { generateHairRoutine } from '../../utils/hairRoutineGenerator';
-import { api, API_BASE } from '../../utils/api';
+import { api, API_BASE, parseJsonResponse } from '../../utils/api';
 
 interface Prediction {
     className: string;
@@ -131,10 +131,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to analyze image');
+                    const errorText = await response.text();
+                    throw new Error(errorText || `Failed to analyze image (${response.status})`);
                 }
 
-                const data: AnalysisResponse = await response.json();
+                const data = await parseJsonResponse<AnalysisResponse>(response);
 
                 // Update Analysis Text
                 setAnalysisResult(data.analysis);

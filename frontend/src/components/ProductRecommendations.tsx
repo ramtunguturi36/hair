@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import catalog from '../data/productCatalog.json';
 import { FaShoppingBag, FaHeart, FaRegHeart, FaImage } from 'react-icons/fa';
 import { useUser } from '@clerk/clerk-react';
+import { API_BASE } from '../utils/api';
 
 interface Product {
     name: string;
@@ -27,7 +28,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairTyp
 
     const fetchSavedProducts = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/saved-products/${user?.id}`);
+            const response = await fetch(`${API_BASE}/api/saved-products/${user?.id}`);
             const data = await response.json();
             setSavedProducts(data.map((item: any) => item.product));
         } catch (error) {
@@ -46,12 +47,12 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({ hairTyp
         const alreadySaved = isSaved(product.name);
         try {
             if (alreadySaved) {
-                await fetch(`http://localhost:5000/api/saved-products/${user.id}/${encodeURIComponent(product.name)}`, {
+                await fetch(`${API_BASE}/api/saved-products/${user.id}/${encodeURIComponent(product.name)}`, {
                     method: 'DELETE'
                 });
                 setSavedProducts(prev => prev.filter(p => p.name !== product.name));
             } else {
-                await fetch('http://localhost:5000/api/saved-products', {
+                await fetch(`${API_BASE}/api/saved-products`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: user.id, product })
