@@ -17,8 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       publishableKey={PUBLISHABLE_KEY}
       signInUrl="/login"
       signUpUrl="/signup"
-      signInFallbackRedirectUrl="/dashboard/analysis"
-      signUpFallbackRedirectUrl="/dashboard/analysis"
       afterSignOutUrl="/"
     >
       <CreditProvider>

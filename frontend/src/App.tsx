@@ -57,7 +57,6 @@ const App: React.FC = () => {
                     routing="path"
                     path="/login"
                     signUpUrl="/signup"
-                    forceRedirectUrl="/dashboard/analysis"
                   />
                 </div>
               </SignedOut>
@@ -76,7 +75,6 @@ const App: React.FC = () => {
                     routing="path"
                     path="/signup"
                     signInUrl="/login"
-                    forceRedirectUrl="/dashboard/analysis"
                   />
                 </div>
               </SignedOut>
@@ -86,15 +84,15 @@ const App: React.FC = () => {
           {/* OAuth/SSO callback route used by Clerk after provider redirect */}
           <Route
             path="/sso-callback"
-            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+            element={<AuthenticateWithRedirectCallback />}
           />
           <Route
             path="/login/sso-callback"
-            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+            element={<AuthenticateWithRedirectCallback />}
           />
           <Route
             path="/signup/sso-callback"
-            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+            element={<AuthenticateWithRedirectCallback />}
           />
 
           {/* Dashboard and nested routes */}
