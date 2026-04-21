@@ -1,5 +1,11 @@
 import React from 'react';
-import { SignedIn, SignedOut, SignUp, SignIn } from '@clerk/clerk-react';
+import {
+  SignedIn,
+  SignedOut,
+  SignUp,
+  SignIn,
+  AuthenticateWithRedirectCallback
+} from '@clerk/clerk-react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PhotoPage from './pages/PhotoPage/PhotoPage';
 import AnalysisPage from './pages/AnalysisPage';
@@ -47,7 +53,12 @@ const App: React.FC = () => {
               </SignedIn>
               <SignedOut>
                 <div className="flex items-center justify-center h-screen">
-                  <SignIn />
+                  <SignIn
+                    routing="path"
+                    path="/login"
+                    signUpUrl="/signup"
+                    forceRedirectUrl="/dashboard/analysis"
+                  />
                 </div>
               </SignedOut>
             </>
@@ -61,11 +72,22 @@ const App: React.FC = () => {
               </SignedIn>
               <SignedOut>
                 <div className="flex items-center justify-center h-screen">
-                  <SignUp />
+                  <SignUp
+                    routing="path"
+                    path="/signup"
+                    signInUrl="/login"
+                    forceRedirectUrl="/dashboard/analysis"
+                  />
                 </div>
               </SignedOut>
             </>
           } />
+
+          {/* OAuth/SSO callback route used by Clerk after provider redirect */}
+          <Route
+            path="/sso-callback"
+            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+          />
 
           {/* Dashboard and nested routes */}
           <Route path="dashboard" element={<Dashboard />}>
@@ -82,6 +104,8 @@ const App: React.FC = () => {
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="admin" element={<AdminPage />} />
           </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ErrorBoundary>
     </Router>
