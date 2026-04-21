@@ -81,12 +81,19 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const FRONTEND_DIST_DIR = path.resolve(__dirname, '..', 'frontend', 'dist');
+const FRONTEND_INDEX_FILE = path.join(FRONTEND_DIST_DIR, 'index.html');
+const HAS_FRONTEND_BUILD = fs.existsSync(FRONTEND_INDEX_FILE);
 const HISTORY_FILE = path.join(__dirname, 'history.json');
 const PROFILE_FILE = path.join(__dirname, 'profiles.json');
 const PROGRESS_FILE = path.join(__dirname, 'progress.json');
 const NOTIFICATIONS_FILE = path.join(__dirname, 'notifications.json');
 const PAYMENTS_FILE = path.join(__dirname, 'payments.json');
 const FLAGS_FILE = path.join(__dirname, 'ai_flags.json');
+
+if (HAS_FRONTEND_BUILD) {
+  app.use(express.static(FRONTEND_DIST_DIR));
+}
 
 // Helper to read history
 const readHistory = () => {
@@ -717,6 +724,17 @@ app.post('/api/analyze-risk', async (req, res) => {
     res.status(500).json({ error: 'Failed to analyze risk', details: error.message });
   }
 });
+
+if (HAS_FRONTEND_BUILD) {
+  app.get('*', (req, res, next) => {
+    // Keep API and backend routes handled by server handlers.
+    if (req.path.startsWith('/api') || req.path === '/create-checkout-session') {
+      return next();
+    }
+
+    return res.sendFile(FRONTEND_INDEX_FILE);
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
