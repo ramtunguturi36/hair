@@ -88,6 +88,14 @@ const App: React.FC = () => {
             path="/sso-callback"
             element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
           />
+          <Route
+            path="/login/sso-callback"
+            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+          />
+          <Route
+            path="/signup/sso-callback"
+            element={<AuthenticateWithRedirectCallback signInFallbackRedirectUrl="/dashboard/analysis" />}
+          />
 
           {/* Dashboard and nested routes */}
           <Route path="dashboard" element={<Dashboard />}>
