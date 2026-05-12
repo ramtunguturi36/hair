@@ -9,5 +9,27 @@
       "link": "https://www.amazon.in/s?k=OGX+Coconut+Milk+Conditioner"
     },
     "savedAt": "2026-04-09T09:24:53.274Z"
+  },
+  {
+    "id": "1778160976368",
+    "userId": "user_39FJ8XiqSSGx03XRJTRZpCigL86",
+    "product": {
+      "name": "OGX Coconut Milk Conditioner",
+      "brand": "OGX",
+      "image": "/shampoos/Images/OGX Coconut Milk Conditioner.jpg",
+      "link": "https://www.amazon.in/s?k=OGX+Coconut+Milk+Conditioner"
+    },
+    "savedAt": "2026-05-07T13:36:16.369Z"
+  },
+  {
+    "id": "1778161228822",
+    "userId": "user_39FJ8XiqSSGx03XRJTRZpCigL86",
+    "product": {
+      "name": "Tresemme Keratin Smooth Serum",
+      "brand": "Tresemme",
+      "image": "/shampoos/Images/Tresemme Keratin Smooth Serum.jpg",
+      "link": "https://www.amazon.in/s?k=Tresemme+Keratin+Smooth+Serum"
+    },
+    "savedAt": "2026-05-07T13:40:28.822Z"
   }
 ]

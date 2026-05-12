@@ -64,5 +64,27 @@
     "read": true,
     "status": "sent-simulated",
     "createdAt": "2026-04-17T05:17:16.133Z"
+  },
+  {
+    "id": "1778161357758",
+    "userId": "user_39FJ8XiqSSGx03XRJTRZpCigL86",
+    "title": "Routine Reminder",
+    "message": "Time for your hair care routine. Stay consistent for better results.",
+    "type": "routine-reminder",
+    "channel": "in-app",
+    "read": true,
+    "status": "delivered",
+    "createdAt": "2026-05-07T13:42:37.760Z"
+  },
+  {
+    "id": "1778161357786",
+    "userId": "user_39FJ8XiqSSGx03XRJTRZpCigL86",
+    "title": "Routine Reminder Email",
+    "message": "This is your scheduled routine reminder. Open Hair Analysis to follow today's plan.",
+    "type": "routine-reminder",
+    "channel": "email",
+    "read": true,
+    "status": "sent-simulated",
+    "createdAt": "2026-05-07T13:42:37.786Z"
   }
 ]

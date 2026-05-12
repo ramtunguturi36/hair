@@ -21,5 +21,26 @@
       "Sat"
     ],
     "updatedAt": "2026-04-08T05:25:26.630Z"
+  },
+  {
+    "userId": "user_39FJ8XiqSSGx03XRJTRZpCigL86",
+    "concerns": [
+      "sensitive scalp"
+    ],
+    "budgetRange": "low",
+    "allergies": [
+      "coconutoil"
+    ],
+    "goals": [
+      "improve shine",
+      "define curls"
+    ],
+    "reminderTime": "20:00",
+    "reminderDays": [
+      "Mon",
+      "Wed",
+      "Sat"
+    ],
+    "updatedAt": "2026-05-07T13:42:23.312Z"
   }
 ]
